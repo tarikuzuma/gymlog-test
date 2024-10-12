@@ -5,12 +5,13 @@
 {% block content %}
 {% from "helpers/_formhelpers.html" import render_field %}
 
-<form method="post" action="{{ url_for('stats_route') }}">
+<form method="post" id="autoSubmitInput" action="{{ url_for('stats_route') }}">
     <dl>
         {{ render_field(form.rfid) }}
     </dl>
     <p><input type="submit" value="Check Stats"></p>
 </form>
+
 <script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
 <script src="{{ url_for('static', filename='js/time.js') }}"></script>
 

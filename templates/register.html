@@ -4,14 +4,27 @@
 
 {% block content %}
 {% from "helpers/_formhelpers.html" import render_field %}
-<form method="post">
-  <dl>
-      {{ render_field(form.full_name) }}
-      {{ render_field(form.student_id) }}
-      {{ render_field(form.pe_course) }}
-      {{ render_field(form.enrolled_block) }}
-      {{ render_field(form.rfid) }}
-  </dl>
-  <p><input type="submit" value="Register"></p>
+<form method="post" class="max-w-sm mx-auto">
+    <div class="mb-5">
+        <label for="full_name" class="form-label">Your full name</label>
+        {{ render_field(form.full_name, class="form-input") }}
+    </div>
+    <div class="mb-5">
+        <label for="student_id" class="form-label">Your student ID</label>
+        {{ render_field(form.student_id, class="form-input") }}
+    </div>
+    <div class="mb-5">
+        <label for="pe_course" class="form-label">Your PE course</label>
+        {{ render_field(form.pe_course, class="form-input") }}
+    </div>
+    <div class="mb-5">
+        <label for="enrolled_block" class="form-label">Enrolled Block</label>
+        {{ render_field(form.enrolled_block, class="form-input") }}
+    </div>
+    <div class="mb-5">
+        <label for="rfid" class="form-label">Your RFID</label>
+        {{ render_field(form.rfid, class="form-input") }}
+    </div>
+    <button type="submit" class="submit-button">Register</button>
 </form>
 {% endblock %}

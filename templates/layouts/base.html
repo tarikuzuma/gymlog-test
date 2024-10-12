@@ -1,19 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class = "absolute inset-0 -z-10 h-full w-full px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#e0f7fa_40%,#dcf235_100%)]">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/RF.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
+    
     <div class ="HomeContent">
         {% block content %}
         
         {% endblock %}
+
+        <a href="/">Home</a>
     </div>
 
-    <a href="/">Home</a>
 </body>
 
 </html>
