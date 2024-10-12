@@ -14,6 +14,7 @@
                 <th>Date and Time of Last Gym </th>
                 <th>Total Workout Time (minutes)</th>
                 <th>Status</th>
+                <th>User Stats</th>
             </tr>
         </thead>
         <tbody>
@@ -24,8 +25,9 @@
                 <td>{{ log.pe_course }}</td>
                 <td>{{ log.enrolled_block }}</td>
                 <td>{{ log.last_gym }}</td>
-                <td>{{ log.total_time }}</td>
+                <td>{{ log.total_workout_time | round }}</td>
                 <td>{{ log.status }}</td>
+                <td><a href = "/individual_stats/{{log.student_id}}">View Stats</a></td>
             </tr>
             {% endfor %}
         </tbody>
