@@ -10,7 +10,7 @@
     <p><strong>Enrolled Block:</strong> {{ user.enrolled_block }}</p>
     <p><strong>Current Status:</strong> {{ user.status }}</p>
     <p><strong>Last Gym Session:</strong> {% if user.last_gym %} {{ user.last_gym }} {% else %} N/A {% endif %}</p>
-    <p><strong>Total Workout Time:</strong> {{ user.total_workout_time }} minutes</p>
+    <p><strong>Total Workout Time:</strong> {{ user.total_workout_time | round }} minutes</p>
     <p><strong>Total Workout Sessions:</strong> {{ user.completed_sessions }}</p>
 
 
