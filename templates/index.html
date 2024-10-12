@@ -1,9 +1,8 @@
-<html>
-<head>
-    <title>Template</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
-<body>
+{% extends 'layouts/base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
     <div class="container">
         <header>
             <h1>Template</h1>
@@ -26,5 +25,4 @@
             <p>&copy; 2018</p>
         </footer>
     </div>
-</body>
-</html>
+{% endblock %}

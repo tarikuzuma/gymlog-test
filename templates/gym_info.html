@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Gym Logs</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+{% extends 'layouts/base.html' %}
+
+{% block title %}All Gym Logs{% endblock %}
+
+{% block content %}
     <h1>All Gym Logs</h1>
     <table>
         <thead>
@@ -35,6 +31,5 @@
         </tbody>
     </table>
 
-    <li><a href="/">Home</a></li>
-</body>
-</html>
+{% endblock %}
+

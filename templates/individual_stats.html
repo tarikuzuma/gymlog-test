@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Authentication</title>
-</head>
-<body>
+{% extends 'layouts/base.html' %}
+
+{% block title %}{{user.full_name}}{% endblock %}
+
+{% block content %}
     <h1>User Stats</h1>
     <h2>{{ user.full_name }}</h2>
     <p><strong>Student ID:</strong> {{ user.student_id }}</p>
@@ -55,7 +52,4 @@
         });
     </script>
 
-    <a href="/">Home</a>
-
-</body>
-</html>
+{% endblock %}

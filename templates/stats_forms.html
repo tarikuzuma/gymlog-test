@@ -1,4 +1,9 @@
-{% from "_formhelpers.html" import render_field %}
+{% extends 'layouts/base.html' %}
+
+{% block title %}Check Stats{% endblock %}
+
+{% block content %}
+{% from "helpers/_formhelpers.html" import render_field %}
 
 <form method="post" action="{{ url_for('stats_route') }}">
     <dl>
@@ -7,4 +12,4 @@
     <p><input type="submit" value="Check Stats"></p>
 </form>
 
-<a href="/">Home</a>
+{% endblock %}
