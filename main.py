@@ -11,7 +11,8 @@ from flask_sqlalchemy import SQLAlchemy
 import wtforms
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, SubmitField
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates/static')
+
 app.secret_key = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spGYM_Log.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

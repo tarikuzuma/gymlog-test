@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/RF.png') }}">
+</head>
+<body>
+    <div class ="HomeContent">
+        {% block content %}
+        
+        {% endblock %}
+    </div>
+</body>
+
+</html>
