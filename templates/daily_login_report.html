@@ -17,6 +17,7 @@
                     <th>Workout End</th>
                     <th>Workout Time (mins)</th>
                     <th>Completed Sessions</th>
+                    <th>View Stats</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,6 +31,8 @@
                     <td>{{ entry.workout_end }}</td>
                     <td>{{ entry.workout_time }}</td>
                     <td>{{ entry.completed_sessions }}</td>
+                    <td><a href = "/individual_stats/{{entry.student_id}}">View Stats</a></td>
+
                 </tr>
                 {% endfor %}
             </tbody>
