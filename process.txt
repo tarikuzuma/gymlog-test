@@ -1,0 +1,41 @@
+UPDATE DD.
+
+LOGIC;
+	If student gooes to school, UPDATE STUDENT AS ONLINE. Get 	Time.
+
+	Once student foes out of school, UPDATE STUDENT AS OFFLINE.
+
+	Have a loop that alwasy check every 5 mins and scans every stdent. 
+
+	IF STUDENT IS OVER 2 hours at the gym, count them as finally completed. TEHREFORE OFFLINE. Formula for time: Current time - Last Log-in.
+
+ 	
+
+Workout Duration by Date:
+X-Axis: Date of gym session (last_gym)
+Y-Axis: Total workout time in minutes (total_workout_time)
+Description: This graph would allow you to see trends in workout duration over time, which could help identify peak workout periods or days when gym usage is higher.
+Number of Completed Sessions by Student:
+
+Number of Completed Sessions by Student:
+X-Axis: Student ID (student_id) or Student Name (full_name)
+Y-Axis: Number of completed gym sessions (completed_sessions)
+Description: This graph could help visualize which students are most active in the gym and track their progress over time.
+Workout Time Distribution by PE Course:
+
+Workout Time Distribution by PE Course:
+X-Axis: PE Course (pe_course)
+Y-Axis: Average workout time (total_workout_time / completed_sessions)
+Description: This graph would compare the average workout time among different PE courses, offering insights into how workout habits differ by course.
+Average Workout Duration by Block:
+
+Average Workout Duration by Block:
+X-Axis: Enrolled Block (enrolled_block)
+Y-Axis: Average workout duration
+Description: You can analyze which blocks have students who tend to work out longer on average.
+User Login and Logout Activity:
+
+User Login and Logout Activity:
+X-Axis: Time of Day (last_login or last_gym)
+Y-Axis: Number of Logins/Logouts
+Description: This graph can help you determine the most popular times for students to check in and out of the gym.

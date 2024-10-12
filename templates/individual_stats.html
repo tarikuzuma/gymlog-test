@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication</title>
+</head>
+<body>
+    <h1>User Stats</h1>
+    <h2>{{ user.full_name }}</h2>
+    <p><strong>Student ID:</strong> {{ user.student_id }}</p>
+    <p><strong>PE Course:</strong> {{ user.pe_course }}</p>
+    <p><strong>Enrolled Block:</strong> {{ user.enrolled_block }}</p>
+    <p><strong>Current Status:</strong> {{ user.status }}</p>
+    <p><strong>Last Gym Session:</strong> {% if user.last_gym %} {{ user.last_gym }} {% else %} N/A {% endif %}</p>
+    <p><strong>Total Workout Time:</strong> {{ user.total_workout_time }} minutes</p>
+    <p><strong>Total Workout Sessions:</strong> {{ user.completed_sessions }}</p>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <canvas id="gym_frequency" width="900" height="400"></canvas>
+    
+    <script>
+        var ctx = document.getElementById('gym_frequency').getContext('2d');
+        var lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ workout_days | tojson | safe }}, // X-axis: Days
+                datasets: [{
+                    label: 'Total Workout Time (minutes)',
+                    data: {{ workout_times | tojson | safe }}, // Y-axis: Total Workout Time
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    fill: true
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Days'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Total Workout Time (minutes)'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <a href="/">Home</a>
+
+</body>
+</html>

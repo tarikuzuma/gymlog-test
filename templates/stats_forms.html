@@ -1,0 +1,10 @@
+{% from "_formhelpers.html" import render_field %}
+
+<form method="post" action="{{ url_for('stats_route') }}">
+    <dl>
+        {{ render_field(form.rfid) }}
+    </dl>
+    <p><input type="submit" value="Check Stats"></p>
+</form>
+
+<a href="/">Home</a>

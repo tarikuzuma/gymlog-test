@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Login Report for {{ date }}</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daily Login Report for {{ date }}</h1>
+
+    {% if log_entries %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Student ID</th>
+                    <th>Enrolled Block</th>
+                    <th>PE Course</th>
+                    <th>Workout Start</th>
+                    <th>Workout End</th>
+                    <th>Workout Time (mins)</th>
+                    <th>Completed Sessions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in log_entries %}
+                <tr>
+                    <td>{{ entry.full_name }}</td>
+                    <td>{{ entry.student_id }}</td>
+                    <td>{{ entry.enrolled_block }}</td>
+                    <td>{{ entry.pe_course }}</td>
+                    <td>{{ entry.workout_start }}</td>
+                    <td>{{ entry.workout_end }}</td>
+                    <td>{{ entry.workout_time }}</td>
+                    <td>{{ entry.completed_sessions }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No login records found for {{ date }}.</p>
+    {% endif %}
+
+    <button onclick="window.print()">Print Report</button>
+
+    <a href="/">Home</a>
+</body>
+</html>

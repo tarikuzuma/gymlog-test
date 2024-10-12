@@ -1,0 +1,13 @@
+[
+    {
+        "full_name": "J-bird",
+        "student_id": "2023-140253",
+        "enrolled_block": "cs221",
+        "pe_course": "pedu2",
+        "workout_start": "19:56:37",
+        "last_gym": "August 13, 2024 19:57:17",
+        "workout_end": "19:57:17",
+        "workout_time": 0.66,
+        "completed_sessions": 1
+    }
+]

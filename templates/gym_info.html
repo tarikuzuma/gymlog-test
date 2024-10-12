@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Gym Logs</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>All Gym Logs</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Student ID Number</th>
+                <th>PE Course</th>
+                <th>Enrolled Block</th>
+                <th>Date and Time of Last Gym </th>
+                <th>Total Workout Time (minutes)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in all_logs %}
+            <tr>
+                <td>{{ log.full_name }}</td>
+                <td>{{ log.student_id }}</td>
+                <td>{{ log.pe_course }}</td>
+                <td>{{ log.enrolled_block }}</td>
+                <td>{{ log.last_gym }}</td>
+                <td>{{ log.total_time }}</td>
+                <td>{{ log.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <li><a href="/">Home</a></li>
+</body>
+</html>

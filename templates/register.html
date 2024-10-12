@@ -1,0 +1,11 @@
+{% from "_formhelpers.html" import render_field %}
+<form method="post">
+  <dl>
+      {{ render_field(form.full_name) }}
+      {{ render_field(form.student_id) }}
+      {{ render_field(form.pe_course) }}
+      {{ render_field(form.enrolled_block) }}
+      {{ render_field(form.rfid) }}
+  </dl>
+  <p><input type="submit" value="Register"></p>
+</form>
