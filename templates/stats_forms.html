@@ -7,7 +7,7 @@
 
 <form method="post" id="autoSubmitInput" action="{{ url_for('stats_route') }}">
     <dl>
-        {{ render_field(form.rfid , class='w-full h-10 p-2 border border-gray-300 rounded', autocomplete='off')  }}
+        {{ render_field(form.rfid , class='w-full h-10 p-2 border border-gray-300 rounded')  }}
     </dl>
     <p><input type="submit" value="Check Stats"></p>
 </form>
