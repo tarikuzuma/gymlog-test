@@ -11,6 +11,7 @@ from flask_sqlalchemy import SQLAlchemy
 import wtforms
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, SubmitField
 
+
 app = Flask(__name__)
 
 app.secret_key = 'your_secret_key_here'
@@ -293,9 +294,11 @@ def login():
                 toggle_gym_status(user)
                 return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))  # Corrected with user_id in URL
             else:
-                print('RFID not recognized. Please try again.')
+                flash("RFID Not Recognized. Please Register.", "error")  # Flash message for unrecognized RFID
         else:
             print("Form validation failed.")
+            flash("Form validation failed. Please check your input.", "error")  # Flash message for validation failure
+
     return render_template('login.html', form=form)
 
 
