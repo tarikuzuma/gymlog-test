@@ -9,9 +9,15 @@
     <dl>
         {{ render_field(form.rfid) }} 
     </dl>
-    <p><input type="submit" value="Register"></p>
+    <p><input type="submit" value="Login"></p>
 </form>
 
 <script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
 <script src="{{ url_for('static', filename='js/time.js') }}"></script>
+
+<li><a href="register">Register</a></li>
+<li><a href="gym_info">All Users</a></li>
+<li><a href="stats_route">Check User Stats</a></li>
+<li><a href="daily_login_report">Daily Logins</a></li>
+
 {% endblock %}

@@ -164,7 +164,8 @@ def log_user_today(user):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    #return render_template('index.html')
+    return redirect(url_for('login'))
 
 # Route to display stats form
 @app.route('/stats_route', methods=['GET', 'POST'])
