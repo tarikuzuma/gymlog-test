@@ -246,7 +246,7 @@ def register():
         ).first()
 
         if existing_user:
-            print('A user with this Student ID or RFID already exists. Please use a different one.', 'error')
+            flash('A user with this Student ID or RFID already exists. Please use a different one.', 'error')
             return render_template('register.html', form=form)
 
         # If no duplicate is found, proceed with registration
