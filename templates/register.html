@@ -4,7 +4,7 @@
 
 {% block content %}
 {% from "helpers/_formhelpers.html" import render_field %}
-<form method="post" class="max-w-sm mx-auto">
+<form method="post" class="max-w-sm mx-auto" id="autoSubmitForm">
     <div class="mb-5">
         <label for="full_name" class="form-label">Your full name</label>
         {{ render_field(form.full_name, class="form-input") }}
@@ -23,10 +23,25 @@
     </div>
     <div class="mb-5">
         <label for="rfid" class="form-label">Your RFID</label>
-        {{ render_field(form.rfid, class="form-input") }}
+        {{ render_field(form.rfid, class="form-input", id="rfid") }} <!-- Unique ID for RFID -->
     </div>
     <button type="submit" class="submit-button">Register</button>
 </form>
+
+<script>
+    function autoSubmitForm() {
+        const inputField = document.getElementById('rfid'); // Unique ID for RFID input field
+        const form = document.getElementById('autoSubmitForm'); // Correct form ID
+
+        inputField.addEventListener('input', function() {
+            if (inputField.value.length >= 10) {
+                form.submit(); // Submit the form when input exceeds 10 characters
+            }
+        });
+    }
+    
+    autoSubmitForm();
+</script>
 
 {% with messages = get_flashed_messages(with_categories=True) %}
     {% if messages %}
