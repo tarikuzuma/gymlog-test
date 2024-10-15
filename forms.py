@@ -15,4 +15,4 @@ class RegGymLogForm(Form):
     rfid = StringField('APC Identification Card', [validators.DataRequired()])
 
 class LoginForm(Form):
-    rfid = StringField('RFID', [validators.DataRequired()])
+    rfid = StringField('', [validators.DataRequired()])

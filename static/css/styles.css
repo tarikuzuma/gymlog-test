@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* LMAO THIS DOESNT WORK */
+/* TODO FIX CSS IN PAGE */
+
 html {
     background: radial-gradient(125% 125% at 50% 10%, #e0f7fa 40%, #dcf235 100%);
 }

@@ -4,7 +4,6 @@ import os
 import json
 from collections import defaultdict # Import defaultdict from collections module
 
-
 from flask import Flask, redirect, url_for, render_template, request, session, flash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
@@ -15,9 +14,7 @@ from forms import RegGymLogForm, LoginForm
 
 app = Flask(__name__)
 
-app.secret_key = 'your_secret_key_here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spGYM_Log.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object('config') # Load configurations from config.py file
 
 db.init_app(app) # Initialize the database
 

@@ -4,8 +4,13 @@
 
 {% block content %}
 
-<div class = "content-center">
+<div class = "text-center">
     <h1 class="text-6xl font-bold text-gray-600">APC GYM LOG</h1>
+
+    <div class="mt-4 mb-4">
+        <h2 id="date" class = "text-2xl"></h2>
+        <p id="time" class = "text-lg"></p>
+    </div>
 
     {% with messages = get_flashed_messages(with_categories=True) %}
         {% if messages %}
@@ -16,13 +21,14 @@
             </ul>
         {% endif %}
     {% endwith %}
-
+    
+    <h2 class = "mt-2 mb-2 font-bold text-gray-500 ">Tap your APC Identification ID here to log-in!</h2>
     {% from "helpers/_formhelpers.html" import render_field %}
     <form method="post" id="autoSubmitInput" action="{{ url_for('login') }}">
         <dl>
             {{ render_field(form.rfid, class='w-full h-10 p-2 border border-gray-300 rounded') }} 
         </dl>
-        <p><input type="submit" value="Login"></p>
+        <p><input type="submit" value=""></p>
     </form>
 
     {{message}}
@@ -30,10 +36,23 @@
     <script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
     <script src="{{ url_for('static', filename='js/time.js') }}"></script>
 
-    <li><a href="register">Register</a></li>
-    <li><a href="gym_info">All Users</a></li>
-    <li><a href="stats_route">Check User Stats</a></li>
-    <li><a href="daily_login_report">Daily Logins</a></li>
+    <div class="flex justify-center mt-4">
+        <ul class="flex space-x-4 items-center">
+            <li>
+                <a href="register" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Register</a>
+            </li>
+            <li>
+                <a href="gym_info" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">All Users</a>
+            </li>
+            <li>
+                <a href="stats_route" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Check User Stats</a>
+            </li>
+            <li>
+                <a href="daily_login_report" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Daily Logins</a>
+            </li>
+        </ul>
+    </div>
+    
 
 </div>
 
