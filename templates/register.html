@@ -2,30 +2,39 @@
 
 {% block title %}Login{% endblock %}
 
+
+<!-- TODO: Make sure to edit css for form to reuse form-input-->
 {% block content %}
+
+<h1 class="text-2xl font-bold text-gray-600 text-center mb-5">Register</h1>
+
 {% from "helpers/_formhelpers.html" import render_field %}
 <form method="post" class="max-w-sm mx-auto" id="autoSubmitForm">
     <div class="mb-5">
-        {{ render_field(form.full_name, class="form-input", placeholder="Jose Enrique D. Nunez") }}
+        {{ render_field(form.full_name, class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light", placeholder="Jose Enrique D. Nunez") }}
     </div>
 
     <div class="mb-5">
-        {{ render_field(form.student_id, class="form-input", placeholder="2022-140071", pattern="[0-9]{4}-[0-9]{6}") }}
+        {{ render_field(form.student_id, class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light", placeholder="2022-140071", pattern="[0-9]{4}-[0-9]{6}") }}
     </div>
 
     <div class="mb-5">
-        {{ render_field(form.pe_course, class="form-input") }}
+        {{ render_field(form.pe_course, class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light") }}
     </div>
 
     <div class="mb-5">
-        {{ render_field(form.enrolled_block, class="form-input", placeholder="SS221, MMA243") }}
+        {{ render_field(form.enrolled_block, class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light", placeholder="SS221, MMA243") }}
     </div>
 
     <div class="mb-5">
-        {{ render_field(form.rfid, class="form-input", id="rfid", placeholder="Tap your APC ID Here!") }} <!-- Unique ID for RFID -->
+        {{ render_field(form.rfid, class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light", id="rfid", placeholder="Tap your APC ID Here!") }} <!-- Unique ID for RFID -->
     </div>
 
-    <button type="submit" class="submit-button">Register</button>
+    <a href="/" class="bold underline text-lg mr-5">
+        &larr; Go back to Home
+    </a>    
+    
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-11 rounded ml-5">Register</button>
 </form>
 
 <script>
