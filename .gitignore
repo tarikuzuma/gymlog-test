@@ -3,3 +3,83 @@ processes.txt
 
 # Ignore logs folder
 logs/
+
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore instance folder (commonly used in Flask applications)
+instance/
+
+# Ignore environment variables file
+.env
+
+# Ignore virtual environment folders
+venv/
+ENV/
+env/
+.venv/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore compiled C extensions
+*.so
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
+ehthumbs.db
+
+# Ignore Python egg files
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+__pypackages__/
+
+# Ignore coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Ignore mypy type checker reports
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ignore Pyre type checker reports
+.pyre/
+
+# Ignore Pyright type checker reports
+.pyright/
+
+# Ignore Pylint reports
+.pylint.d/
+
+# Ignore Bandit security reports
+.bandit/
+
+# Ignore Pytest cache
+.pytest_cache/

@@ -10,7 +10,8 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 import wtforms
 from wtforms import Form, BooleanField, StringField, PasswordField, validators, SubmitField
-
+from models import db, StudentData  
+from forms import RegGymLogForm, LoginForm  
 
 app = Flask(__name__)
 
@@ -18,37 +19,7 @@ app.secret_key = 'your_secret_key_here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spGYM_Log.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
-
-# Database model
-class StudentData(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String(100), nullable=False)
-    student_id = db.Column(db.String(15), nullable=False, unique=True)
-    pe_course = db.Column(db.String(10), nullable=False)
-    enrolled_block = db.Column(db.String(10), nullable=False)
-    rfid = db.Column(db.String(50), nullable=False, unique=True)
-    status = db.Column(db.String(10), nullable=False, default='offline')  # online or offline
-    last_gym = db.Column(db.DateTime, nullable=True)  # DateTime of last gym session end
-    total_workout_time = db.Column(db.Float, nullable=False, default=0.0)  # Total workout time in minutes
-    last_login = db.Column(db.DateTime, nullable=True)  # DateTime of last gym session start
-    completed_sessions = db.Column(db.Integer, nullable=False, default=0)  # Number of completed gym sessions
-
-class RegGymLogForm(Form):
-    full_name = StringField('Full Name', [validators.Length(min=2, max=100), validators.DataRequired()])
-    student_id = StringField('Student ID Number', [validators.Length(min=9, max=13), validators.DataRequired()])
-    pe_course = wtforms.SelectField('PE Course', choices=[
-        ('pedu1', 'PEEDU1'),
-        ('pedu2', 'PEEDU2'),
-        ('pedu3', 'PEEDU3'),
-        ('pedu4', 'PEEDU4'),
-        ('none', 'None')
-    ], validators=[validators.DataRequired()])
-    enrolled_block = StringField('Enrolled Block', [validators.Length(min=3, max=9), validators.DataRequired()])
-    rfid = StringField('APC Identification Card', [validators.DataRequired()])
-
-class LoginForm(Form):
-    rfid = StringField('RFID', [validators.DataRequired()])
+db.init_app(app) # Initialize the database
 
 ############################################################################################################
 
