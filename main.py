@@ -266,15 +266,33 @@ def login():
 @app.route('/toggle_gym_status/<string:user_id>', methods=['GET'])
 def toggle_gym_status_route(user_id):
     user = StudentData.query.filter_by(student_id=user_id).first_or_404()
+
+    # Default values for messages
+    message = ''
+    message2 = ''
+    workout_time_message = ''
+
     if user.status == 'online':
         message = 'User is currently logged in.'
         message2 = 'Welcome'
+        workout_time_message = "Ongoing"
     elif user.status == 'offline':
         message = 'User is currently logged out.'
         message2 = 'Goodbye'
+
+        # Calculate workout time in minutes
+        workout_time = round((datetime.now() - user.last_login).total_seconds() / 60, 2)
+        workout_time_message = f"{workout_time} minutes"  # Pass only the value here, no need to append 'minutes'
+
+        # Log user info (assuming this function does some logging or other actions)
         log_user_today(user)
     
-    return render_template('user_auth.html', user=user, message=message, message2=message2)
+    # Pass all required variables to the template
+    return render_template('user_auth.html', 
+                           user=user, 
+                           message=message, 
+                           message2=message2, 
+                           workout_time_message=workout_time_message)
 
 # Route to display available dates for daily login report
 @app.route('/daily_login_report/')

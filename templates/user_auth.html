@@ -3,21 +3,31 @@
 {% block title %}User Authentication{% endblock %}
 
 {% block content %}
-<body>
-    <h1>{{ message }}</h1>
-    <h2>{{ message2 }}, {{ user.full_name }}!</h2>
-    <p><strong>Student ID:</strong> {{ user.student_id }}</p>
-    <p><strong>PE Course:</strong> {{ user.pe_course }}</p>
-    <p><strong>Enrolled Block:</strong> {{ user.enrolled_block }}</p>
-    <p><strong>Current Status:</strong> {{ user.status }}</p>
-    <p><strong>Last Gym Session:</strong> {% if user.last_gym %} {{ user.last_gym }} {% else %} N/A {% endif %}</p>
-    <p><strong>Total Workout Time:</strong> {{ user.total_workout_time }} minutes</p>
-    <p><strong>Total Workout Sessions:</strong> {{ user.completed_sessions }} </p>
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-white shadow-lg rounded-lg p-8 max-w-xl w-full">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">{{ message }}</h1>
+            <h2 class="text-xl text-center text-gray-600 mb-4">{{ message2 }}, <span class="font-semibold">{{ user.full_name }}</span>!</h2>
 
-    <h2> Redirecting to home in 5 seconds...</h2>
-    <script>
-        setTimeout(function(){
-            window.location.href = '/';
-        }, 5000);  // Redirect after 5 seconds
-    </script>
+            <div class="space-y-3">
+                <p class="text-gray-700"><strong class="font-semibold">Student ID:</strong> {{ user.student_id }}</p>
+                <p class="text-gray-700"><strong class="font-semibold">Current Status:</strong> {{ user.status }}</p>
+                <p class="text-gray-700"><strong class="font-semibold">Last Gym Session:</strong> {% if user.last_gym %} {{ user.last_gym }} {% else %} N/A {% endif %}</p>
+                <p class="text-gray-700"><strong class="font-semibold">Total Workout Time This Session: </strong>{{ workout_time_message }} </p>
+                <p class="text-gray-700"><strong class="font-semibold">Overall Total Workout Time:</strong> {{ user.total_workout_time }} minutes</p>
+                <p class="text-gray-700"><strong class="font-semibold">Total Workout Sessions:</strong> {{ user.completed_sessions }}</p>
+            </div>
+
+            <h2 class="text-lg text-center mt-6 text-gray-600">Redirecting to home in 5 seconds...</h2>
+
+            <div class="flex justify-center mt-8">
+                <a href="/" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Go to Home</a>
+            </div>
+            
+            <script>
+                setTimeout(function(){
+                    window.location.href = '/';
+                }, 5000);  // Redirect after 5 seconds
+            </script>
+        </div>
+    </div>
 {% endblock %}
