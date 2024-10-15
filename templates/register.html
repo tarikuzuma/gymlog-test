@@ -30,12 +30,12 @@
 
 <script>
     function autoSubmitForm() {
-        const inputField = document.getElementById('rfid'); // Unique ID for RFID input field
-        const form = document.getElementById('autoSubmitForm'); // Correct form ID
+        const inputField = document.getElementById('rfid'); 
+        const form = document.getElementById('autoSubmitForm'); 
 
         inputField.addEventListener('input', function() {
             if (inputField.value.length >= 10) {
-                form.submit(); // Submit the form when input exceeds 10 characters
+                form.submit();
             }
         });
     }

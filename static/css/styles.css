@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
     background: radial-gradient(125% 125% at 50% 10%, #e0f7fa 40%, #dcf235 100%);
 }

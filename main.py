@@ -72,7 +72,6 @@ def toggle_gym_status(user):
         user.status = 'online'
         user.last_login = datetime.now()  # Record login time
         print (f"User {user.full_name} logged in at {user.last_login}.")
-        message = "User logged in."
     
     elif user.status == 'online':
         # If the user is online, log them out
@@ -86,12 +85,10 @@ def toggle_gym_status(user):
             duration = round((datetime.now() - user.last_login).total_seconds() / 60, 2)
             user.total_workout_time += duration
         
-        message = "User logged out."
 
         user.completed_sessions += 1
     
     db.session.commit()
-    return message
 
 # Function to log out all users when the server is shut down
 def logout_all_users():
@@ -187,7 +184,6 @@ def stats_route():
             print("Form validation failed.")
     return render_template('stats_forms.html', form=form)
 
-# Chat gpt generater code
 # Route to display stats form
 @app.route('/individual_stats/<string:user_id>')
 def individual_stats(user_id):
