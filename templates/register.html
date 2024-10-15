@@ -6,25 +6,25 @@
 {% from "helpers/_formhelpers.html" import render_field %}
 <form method="post" class="max-w-sm mx-auto" id="autoSubmitForm">
     <div class="mb-5">
-        <label for="full_name" class="form-label">Your full name</label>
-        {{ render_field(form.full_name, class="form-input") }}
+        {{ render_field(form.full_name, class="form-input", placeholder="Jose Enrique D. Nunez") }}
     </div>
+
     <div class="mb-5">
-        <label for="student_id" class="form-label">Your student ID</label>
-        {{ render_field(form.student_id, class="form-input") }}
+        {{ render_field(form.student_id, class="form-input", placeholder="2022-140071", pattern="[0-9]{4}-[0-9]{6}") }}
     </div>
+
     <div class="mb-5">
-        <label for="pe_course" class="form-label">Your PE course</label>
         {{ render_field(form.pe_course, class="form-input") }}
     </div>
+
     <div class="mb-5">
-        <label for="enrolled_block" class="form-label">Enrolled Block</label>
-        {{ render_field(form.enrolled_block, class="form-input") }}
+        {{ render_field(form.enrolled_block, class="form-input", placeholder="SS221, MMA243") }}
     </div>
+
     <div class="mb-5">
-        <label for="rfid" class="form-label">Your RFID</label>
-        {{ render_field(form.rfid, class="form-input", id="rfid") }} <!-- Unique ID for RFID -->
+        {{ render_field(form.rfid, class="form-input", id="rfid", placeholder="Tap your APC ID Here!") }} <!-- Unique ID for RFID -->
     </div>
+
     <button type="submit" class="submit-button">Register</button>
 </form>
 

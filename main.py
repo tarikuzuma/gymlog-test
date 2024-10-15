@@ -36,7 +36,7 @@ class StudentData(db.Model):
 
 class RegGymLogForm(Form):
     full_name = StringField('Full Name', [validators.Length(min=2, max=100), validators.DataRequired()])
-    student_id = StringField('Student ID Number', [validators.Length(min=9, max=15), validators.DataRequired()])
+    student_id = StringField('Student ID Number', [validators.Length(min=9, max=13), validators.DataRequired()])
     pe_course = wtforms.SelectField('PE Course', choices=[
         ('pedu1', 'PEEDU1'),
         ('pedu2', 'PEEDU2'),
@@ -44,12 +44,7 @@ class RegGymLogForm(Form):
         ('pedu4', 'PEEDU4'),
         ('none', 'None')
     ], validators=[validators.DataRequired()])
-    enrolled_block = wtforms.SelectField('Enrolled Block', choices=[
-        ('mma221', 'MMA221'),
-        ('mma222', 'MMA222'),
-        ('cs221', 'CS221'),
-        ('it222', 'IT222')
-    ], validators=[validators.DataRequired()])
+    enrolled_block = StringField('Enrolled Block', [validators.Length(min=3, max=9), validators.DataRequired()])
     rfid = StringField('APC Identification Card', [validators.DataRequired()])
 
 class LoginForm(Form):
