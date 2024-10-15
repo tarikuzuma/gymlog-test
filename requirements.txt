@@ -1,8 +1,6 @@
 wtforms
 flask-wtf
 alchemySQL
-pip install wtforms flask-wtf
+wtforms 
+flask-sqlalchemy
 
-
-https://flask.palletsprojects.com/en/3.0.x/patterns/wtforms/
-https://www.geeksforgeeks.org/how-to-add-graphs-to-flask-apps/
