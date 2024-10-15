@@ -1,6 +1,5 @@
 wtforms
 flask-wtf
-alchemySQL
 wtforms 
 flask-sqlalchemy
 
