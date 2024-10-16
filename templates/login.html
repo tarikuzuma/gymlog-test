@@ -22,7 +22,7 @@
         {% endif %}
     {% endwith %}
     
-    <h2 class = "mt-2 mb-2 font-bold text-gray-500 ">Tap your APC Identification ID here to log-in!</h2>
+    <h2 class = "mt-2 mb-2 font-bold text-gray-500 ">Tap your APC Identification ID here to log-in or log-out!</h2>
     {% from "helpers/_formhelpers.html" import render_field %}
     <form method="post" id="autoSubmitInput" action="{{ url_for('login') }}">
         <dl>
