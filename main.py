@@ -234,6 +234,8 @@ def gym_info():
         if log.last_gym:
             log.last_gym = log.last_gym.strftime("%B %d, %Y %H:%M:%S")
 
+    # Sort logs so that people online are at the top
+    all_logs = sorted(all_logs, key=lambda log: log.status != 'online')
 
     return render_template('gym_info.html', all_logs=all_logs)
 

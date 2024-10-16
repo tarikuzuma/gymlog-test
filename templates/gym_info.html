@@ -26,7 +26,13 @@
                 <td>{{ log.enrolled_block }}</td>
                 <td>{{ log.last_gym }}</td>
                 <td>{{ log.total_workout_time | round }}</td>
-                <td>{{ log.status }}</td>
+                <td>
+                {% if log.status == 'online' %}
+                        <b class ="font-bold">{{ log.status }}</b>
+                    {% else %}
+                        {{ log.status }}
+                {% endif %}
+                </td>
                 <td><a href = "/individual_stats/{{log.student_id}}">View Stats</a></td>
             </tr>
             {% endfor %}
