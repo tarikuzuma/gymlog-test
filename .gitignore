@@ -83,3 +83,4 @@ dmypy.json
 
 # Ignore Pytest cache
 .pytest_cache/
+instance
