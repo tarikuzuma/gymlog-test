@@ -15,6 +15,7 @@
                 <th>Total Workout Time (minutes)</th>
                 <th>Status</th>
                 <th>User Stats</th>
+                <th>Toggle Status</th>
             </tr>
         </thead>
         <tbody>
@@ -34,6 +35,12 @@
                 {% endif %}
                 </td>
                 <td><a href = "/individual_stats/{{log.student_id}}">View Stats</a></td>
+                <td>
+                    <form action="{{ url_for('login') }}" method="POST">
+                        <input type="hidden" name="rfid" value="{{ log.rfid }}">
+                        <button type="submit">Toggle Status</button>
+                    </form>
+                </td>                
             </tr>
             {% endfor %}
         </tbody>
