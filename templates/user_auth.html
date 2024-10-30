@@ -5,14 +5,35 @@
 {% block content %}
     <div class="flex items-center justify-center min-h-screen">
         <div class="bg-white shadow-lg rounded-lg p-8 max-w-xl w-full">
-            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">{{ message }}</h1>
-            <h2 class="text-xl text-center text-gray-600 mb-4">{{ message2 }}, <span class="font-semibold">{{ user.full_name }}</span>!</h2>
+
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+                {% if user.status == 'online' %}
+                    User is currently logged in.
+                {% else %}
+                    User is currently logged out.
+                {% endif %}
+            </h1>
+            <h2 class="text-xl text-center text-gray-600 mb-4">
+                {% if user.status == 'online' %}
+                    Welcome and good luck, <span class="font-semibold">{{ user.full_name }}</span>!
+                {% else %}
+                    Goodbye, <span class="font-semibold">{{ user.full_name }}</span>!
+                {% endif %}
+            </h2>
 
             <div class="space-y-3">
                 <p class="text-gray-700"><strong class="font-semibold">Student ID:</strong> {{ user.student_id }}</p>
                 <p class="text-gray-700"><strong class="font-semibold">Current Status:</strong> {{ user.status }}</p>
-                <p class="text-gray-700"><strong class="font-semibold">Last Gym Session:</strong> {% if user.last_gym %} {{ user.last_gym }} {% else %} N/A {% endif %}</p>
-                <p class="text-gray-700"><strong class="font-semibold">Total Workout Time This Session: </strong>{{ workout_time_message }} </p>
+                <p class="text-gray-700"><strong class="font-semibold">Last Gym Session:</strong> 
+                    {% if user.last_gym %} 
+                        {{ user.last_gym }} 
+                    {% else %} 
+                        N/A 
+                    {% endif %} </p>
+                <p class="text-gray-700">
+                    <strong class="font-semibold">Total Workout Time This Session: </strong>
+                    {{ workout_time }}
+                </p>                
                 <p class="text-gray-700"><strong class="font-semibold">Overall Total Workout Time:</strong> {{ user.total_workout_time }} minutes</p>
                 <p class="text-gray-700"><strong class="font-semibold">Total Workout Sessions:</strong> {{ user.completed_sessions }}</p>
             </div>
