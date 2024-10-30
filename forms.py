@@ -1,3 +1,7 @@
+'''
+    File contains the forms for the gym log application. Thank you WTFORMS for making this easy.
+'''
+
 import wtforms
 from wtforms import Form, StringField, PasswordField, validators
 
