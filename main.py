@@ -242,25 +242,26 @@ def gym_info():
 # Route to display login page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm(request.form)
     if request.method == 'POST':
         print("Form submitted.")
-        if form.validate():
-            print("Form validated.")
-            rfid = form.rfid.data
+        
+        # Get RFID from the form
+        rfid = request.form.get('rfid')
+        
+        if rfid:
             print(f"RFID: {rfid}")
             user = StudentData.query.filter_by(rfid=rfid).first()
             if user:
                 print("RFID recognized.")
-                toggle_gym_status(user)
-                return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))  # Corrected with user_id in URL
+                toggle_gym_status(user)  # Toggle the user's gym status
+                return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))  # Redirect to the status route
             else:
                 flash("RFID Not Recognized. Please Register.", "error")  # Flash message for unrecognized RFID
         else:
-            print("Form validation failed.")
-            flash("Form validation failed. Please check your input.", "error")  # Flash message for validation failure
+            flash("RFID is required.", "error")  # Flash message for missing RFID
 
-    return render_template('login.html', form=form)
+    return render_template('login.html', form=LoginForm())
+
 
 
 # Route to toggle status of student
@@ -336,4 +337,4 @@ def daily_login_report(date):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(debug=True, port=5001) # Run the Flask app
