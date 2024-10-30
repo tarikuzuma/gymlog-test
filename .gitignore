@@ -84,3 +84,8 @@ dmypy.json
 # Ignore Pytest cache
 .pytest_cache/
 instance
+# Ignore VSCode settings
+.vscode/
+
+# Ignore the database file in the instance directory
+instance/spGYM_Log.db
