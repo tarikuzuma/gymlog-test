@@ -1,105 +1,72 @@
 import atexit
-
 import os
 import json
-from collections import defaultdict # Import defaultdict from collections module
-
-from flask import Flask, redirect, url_for, render_template, request, session, flash
+from collections import defaultdict
+from flask import Flask, redirect, url_for, render_template, request, flash
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
-import wtforms
-from wtforms import Form, BooleanField, StringField, PasswordField, validators, SubmitField
-from models import db, StudentData  
-from forms import RegGymLogForm, LoginForm  
+from models import db, StudentData
+from forms import RegGymLogForm, LoginForm
 
 app = Flask(__name__)
+app.config.from_object('config')
+db.init_app(app)
 
-app.config.from_object('config') # Load configurations from config.py file
+# Suppress werkzeug logging to console (COMMENT OUT IF NOT NEEDED)
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
-db.init_app(app) # Initialize the database
-
-############################################################################################################
-
+# Utility function for date and time formatting
 def get_current_datetime():
     now = datetime.now()
-    return {
-        'date': now.strftime("%B %d, %Y"),
-        'time': now.strftime("%H:%M:%S"),
-        'day': now.strftime("%A")
-    }
+    return now.strftime("%B %d, %Y"), now.strftime("%H:%M:%S")
 
-# Function to toggle gym status of user
+# Toggle user gym status
 def toggle_gym_status(user):
+    now = datetime.now()
     if user.status == 'offline':
-        # If the user is offline, log them in
         user.status = 'online'
-        user.last_login = datetime.now()  # Record login time
-        print (f"User {user.full_name} logged in at {user.last_login}.")
-    
-    elif user.status == 'online':
-        # If the user is online, log them out
+        user.last_login = now
+        print (f"{get_current_datetime()[1]} : {user.full_name} logged in.")
+    else:
         user.status = 'offline'
-        
-        user.last_gym = datetime.now()  # Record logout time
-        print (f"User {user.full_name} logged out at {user.last_gym}.")
-        
-        # Calculate workout duration in minutes and add to total_workout_time
+        user.last_gym = now.replace(microsecond=0)
         if user.last_login:
-            duration = round((datetime.now() - user.last_login).total_seconds() / 60, 2)
-            user.total_workout_time += duration
-        
-
+            workout_duration = round((now - user.last_login).total_seconds() / 60, 2)
+            user.total_workout_time += workout_duration
         user.completed_sessions += 1
-    
+        print (f"{get_current_datetime()[1]} : {user.full_name} logged out.")
+    user.last_gym_formatted = user.last_gym.strftime("%B %d, %Y %H:%M:%S") if user.last_gym else None
     db.session.commit()
 
-# Function to log out all users when the server is shut down
+# Log out all users on server shutdown
 def logout_all_users():
     with app.app_context():
         online_users = StudentData.query.filter_by(status='online').all()
         for user in online_users:
             user.status = 'offline'
-            user.completed_sessions += 1
             user.last_gym = datetime.now()
             if user.last_login:
-                duration = (user.last_gym - user.last_login).total_seconds() / 60
-                user.total_workout_time += duration
-            print(f"User {user.full_name} logged out at {user.last_gym}. due to server shutdown.")
+                user.total_workout_time += (user.last_gym - user.last_login).total_seconds() / 60
             log_user_today(user)
         db.session.commit()
-
-    current_datetime = get_current_datetime()
-
-    print(f"{current_datetime['date']} {current_datetime['time']} : All users logged out due to server shutdown.")
+    print(f"{get_current_datetime()[0]} {get_current_datetime()[1]} : All users logged out due to server shutdown.")
 
 atexit.register(logout_all_users)
 
-# Log users who logged in today in a JSON file
-# Function to log users who logged in today in a JSON file
+# Log user data
 def log_user_today(user):
     today = datetime.now().strftime('%m-%d-%Y')
-    directory = 'Logs'
-    filename = f"{today}.json"
-    
-    # Create Logs directory if it doesn't exist
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    
-    filepath = os.path.join(directory, filename)
-    
-    # Check if the file already exists
-    if not os.path.exists(filepath):
-        with open(filepath, 'w') as file:
-            json.dump([], file)  # Create an empty JSON array
+    filepath = os.path.join('Logs', f"{today}.json")
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
-    # Calculate workout time if the workout has ended
     workout_time = None
     workout_end = None
     if user.status == 'offline' and user.last_login and user.last_gym:
         workout_time = round((user.last_gym - user.last_login).total_seconds() / 60, 2)
         workout_end = user.last_gym.strftime("%H:%M:%S")
-    
-    # Prepare the user's log data
+
     user_log = {
         "full_name": user.full_name,
         "student_id": user.student_id,
@@ -112,229 +79,126 @@ def log_user_today(user):
         "completed_sessions": user.completed_sessions
     }
 
-    # Append the log to the JSON file
+    if not os.path.isfile(filepath):
+        with open(filepath, 'w') as file:
+            json.dump([], file)
+
     with open(filepath, 'r+') as file:
         data = json.load(file)
         data.append(user_log)
         file.seek(0)
         json.dump(data, file, indent=4)
-
-    print(f"{user.full_name} log saved")
-
-############################################################################################################
+    print (f"{get_current_datetime()[1]} : {user.full_name} log saved")
 
 @app.route('/')
 def home():
-    #return render_template('index.html')
     return redirect(url_for('login'))
 
-# Route to display stats form
 @app.route('/stats_route', methods=['GET', 'POST'])
 def stats_route():
     form = LoginForm(request.form)
-    if request.method == 'POST':
-        print("Stats submitted.")
-        if form.validate():
-            rfid = form.rfid.data
-            print(f"RFID: {rfid}")
-            user = StudentData.query.filter_by(rfid=rfid).first()
-            if user:
-                print("STATS LOADING...")
-                return redirect(url_for('individual_stats', user_id=user.student_id))
-            else:
-                print('RFID not recognized. Please try again.')
-        else:
-            print("Form validation failed.")
+    if request.method == 'POST' and form.validate():
+        user = StudentData.query.filter_by(rfid=form.rfid.data).first()
+        if user:
+            return redirect(url_for('individual_stats', user_id=user.student_id))
+        flash('RFID not recognized. Please try again.', 'error')
     return render_template('stats_forms.html', form=form)
 
-# Route to display stats form
 @app.route('/individual_stats/<string:user_id>')
 def individual_stats(user_id):
     user = StudentData.query.filter_by(student_id=user_id).first_or_404()
     logs_directory = 'logs'
     workout_data = defaultdict(float)
-    
-    # Step 1: Gather all dates from the logs
-    all_dates = set()
+    all_dates = {filename[:-5] for filename in os.listdir(logs_directory) if filename.endswith('.json')}
 
-    for filename in os.listdir(logs_directory):
-        if filename.endswith('.json'):
-            all_dates.add(filename[:-5])  # Extract the date part (MM-DD-YY)
-
-    # Initialize workout_data with all dates
     for date in all_dates:
         workout_data[date] = 0.0
 
-    # Step 2: Iterate through logs and populate workout data
     for filename in os.listdir(logs_directory):
         if filename.endswith('.json'):
-            filepath = os.path.join(logs_directory, filename)
-            with open(filepath, 'r') as file:
-                log_entries = json.load(file)
+            with open(os.path.join(logs_directory, filename), 'r') as file:
+                for entry in json.load(file):
+                    if entry['student_id'] == user_id and entry['workout_time'] != "Workout ongoing":
+                        workout_data[filename[:-5]] += float(entry['workout_time'])
 
-                # Check each log entry
-                for entry in log_entries:
-                    if entry['student_id'] == user_id:
-                        # Add workout time for that day
-                        if entry['workout_time'] != "Workout ongoing":
-                            workout_data[filename[:-5]] += float(entry['workout_time'])
-
-    # Prepare data for the graph
-    workout_days = sorted(workout_data.keys())  # X-axis: Days
-    workout_times = [workout_data[day] for day in workout_days]  # Y-axis: Total Workout Time
-
-    # Render the graph
     return render_template(
         'individual_stats.html', 
         user=user, 
-        workout_days=workout_days, 
-        workout_times=workout_times
+        workout_days=sorted(workout_data.keys()), 
+        workout_times=[workout_data[day] for day in sorted(workout_data.keys())]
     )
 
-
-# Route to register gym log
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegGymLogForm(request.form)
     if request.method == 'POST' and form.validate():
-
-        # Check for duplicate student_id or RFID
-        existing_user = StudentData.query.filter(
-            (StudentData.student_id == form.student_id.data) | 
-            (StudentData.rfid == form.rfid.data)
-        ).first()
-
-        if existing_user:
-            flash('A user with this Student ID or RFID already exists. Please use a different one.', 'error')
+        if StudentData.query.filter(
+                (StudentData.student_id == form.student_id.data) | 
+                (StudentData.rfid == form.rfid.data)
+            ).first():
+            flash('Duplicate Student ID or RFID. Please use a different one.', 'error')
             return render_template('register.html', form=form)
 
-        # If no duplicate is found, proceed with registration
-        gym_log_entry = StudentData(
+        new_user = StudentData(
             full_name=form.full_name.data,
             student_id=form.student_id.data,
             pe_course=form.pe_course.data,
             enrolled_block=form.enrolled_block.data,
             rfid=form.rfid.data
         )
-        db.session.add(gym_log_entry)
+        db.session.add(new_user)
         db.session.commit()
-        print(f'Gym log submitted successfully! New user, {form.full_name.data}, has been registered. at {datetime.now()}')
         return redirect(url_for('home'))
-
     return render_template('register.html', form=form)
-    
 
-# Route to display all gym logs
+# Route for all gym loggers
 @app.route('/gym_info')
 def gym_info():
     all_logs = StudentData.query.all()
-
-    # round up last_gym time to the nearest seconds
-    for log in all_logs:
-        if log.last_gym:
-            log.last_gym = log.last_gym.strftime("%B %d, %Y %H:%M:%S")
-
-    # Sort logs so that people online are at the top
     all_logs = sorted(all_logs, key=lambda log: log.status != 'online')
-
     return render_template('gym_info.html', all_logs=all_logs)
 
-# Route to display login page
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        print("Form submitted.")
-        
-        # Get RFID from the form
         rfid = request.form.get('rfid')
-        
-        if rfid:
-            print(f"RFID: {rfid}")
-            user = StudentData.query.filter_by(rfid=rfid).first()
-            if user:
-                print("RFID recognized.")
-                toggle_gym_status(user)  # Toggle the user's gym status
-                return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))  # Redirect to the status route
-            else:
-                flash("RFID Not Recognized. Please Register.", "error")  # Flash message for unrecognized RFID
-        else:
-            flash("RFID is required.", "error")  # Flash message for missing RFID
-
+        user = StudentData.query.filter_by(rfid=rfid).first()
+        if user:
+            toggle_gym_status(user)
+            return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))
+        flash("RFID Not Recognized. Please Register.", "error")
     return render_template('login.html', form=LoginForm())
 
-
-
-# Route to toggle status of student
-# Redirect user to
 @app.route('/toggle_gym_status/<string:user_id>', methods=['GET'])
 def toggle_gym_status_route(user_id):
     user = StudentData.query.filter_by(student_id=user_id).first_or_404()
-
-    # Default values for messages
-    message = ''
-    message2 = ''
-    workout_time_message = ''
-
-    if user.status == 'online':
-        message = 'User is currently logged in.'
-        message2 = 'Welcome'
-        workout_time_message = "Ongoing"
-    elif user.status == 'offline':
-        message = 'User is currently logged out.'
-        message2 = 'Goodbye'
-
+    if user.status == 'offline':
         # Calculate workout time in minutes
         workout_time = round((datetime.now() - user.last_login).total_seconds() / 60, 2)
-        workout_time_message = f"{workout_time} minutes"  # Pass only the value here, no need to append 'minutes'
-
-        # Log user info (assuming this function does some logging or other actions)
+        workout_time_message = f"{workout_time} minutes"
         log_user_today(user)
-    
-    # Pass all required variables to the template
-    return render_template('user_auth.html', 
-                           user=user, 
-                           message=message, 
-                           message2=message2, 
-                           workout_time_message=workout_time_message)
+    else:
+        workout_time_message = "Ongoing"
+    return render_template('user_auth.html', user=user, workout_time=workout_time_message)
 
-# Route to display available dates for daily login report
 @app.route('/daily_login_report/')
 def daily_login_report_dates():
     logs_directory = 'logs'
-    all_dates = set()
+    all_dates = {filename[:-5] for filename in os.listdir(logs_directory) if filename.endswith('.json')}
+    return render_template('daily_login_report_dates.html', dates=sorted(all_dates))
 
-    # Retrieve all JSON log files in the logs directory
-    for filename in os.listdir(logs_directory):
-        if filename.endswith('.json'):
-            # Extract the date part from the filename (assumed to be MM-DD-YEAR.json)
-            date_str = filename[:-5]  # Remove the '.json' extension
-            all_dates.add(date_str)
-
-    # Sort the dates (if necessary)
-    sorted_dates = sorted(all_dates)
-
-    return render_template('daily_login_report_dates.html', dates=sorted_dates)
-
-
-# Route to display who logged in for a certian day
-# If the name of the day is August 11, 2024, the date is August 11, 2024
 @app.route('/daily_login_report/<string:date>')
 def daily_login_report(date):
-    directory = 'logs'
-    filename = f"{date}.json"
-    filepath = os.path.join(directory, filename)
-
-    if not os.path.exists(filepath):
-        return render_template('daily_login_report.html', date=date, log_entries=[])
-    
-    with open(filepath, 'r') as file:
-        log_entries = json.load(file)
-    
+    filepath = os.path.join('logs', f"{date}.json")
+    log_entries = []
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as file:
+            log_entries = json.load(file)
     return render_template('daily_login_report.html', date=date, log_entries=log_entries)
 
-    
-############################################################################################################
 if __name__ == "__main__":
+    print (f"{get_current_datetime()[0]} {get_current_datetime()[1]} : Starting server...")
+    print(f"{get_current_datetime()[0]} {get_current_datetime()[1]} : Hello, welcome to the Gym Logger!")
     with app.app_context():
         db.create_all()
-    app.run(debug=True, port=5001) # Run the Flask app
+    app.run(debug=True, port=5001)
