@@ -1,3 +1,9 @@
+'''
+This file contains the database model for the student data. The following fields msut not be duplicated:
+    - student_id
+    - rfid
+'''
+
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
