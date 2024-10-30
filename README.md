@@ -41,6 +41,7 @@ To run commands for the application, set the `FLASK_APP` environment variable an
 Set the `FLASK_APP` variable:
 ```bash
 set FLASK_APP=commands.py  # On Windows
+$env:FLASK_APP="commands.py" # On CMD or PowerShell
 export FLASK_APP=commands.py  # On macOS/Linux
 ```
 
@@ -59,7 +60,3 @@ flask seeder:tests
 ## Contributing
 
 We welcome contributions! If you'd like to contribute, please fork the repository and submit a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for more details.
