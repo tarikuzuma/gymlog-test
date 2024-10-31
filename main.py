@@ -204,6 +204,7 @@ def daily_login_report_dates():
         {datetime.strptime(filename[:-5], '%m-%d-%Y') for filename in os.listdir(logs_directory) if filename.endswith('.json')},
         reverse=True
     )
+    #sorted_dates = [{"date": date.strftime('%m-%d-%Y'), "month_year": date.strftime('%B %Y')} for date in all_dates]
     sorted_dates = [date.strftime('%m-%d-%Y') for date in all_dates]
     return render_template('daily_login_report_dates.html', dates=sorted_dates)
 
