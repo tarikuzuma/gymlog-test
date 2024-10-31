@@ -9,6 +9,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
+import os
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object('config') 
@@ -55,3 +57,19 @@ def seeder_db():
             print("Database seeded with test data.")
         else:
             print("Seeder aborted.")
+
+# Seed logs with test logs HELP IM BRAIN FUCKED
+@app.cli.command("seeder:logs")
+def seeder_logs():
+    answer = input("This will add dummy logs in your logs folder BUT won't delete the previous ones. Are you sure you want to proceed? (y/n): ")
+
+    if answer.lower() == 'y':
+        logs_directory = 'logs'
+        logs_seed_directory = 'seeders/logs/log_test.json'
+
+        # copy the content of the seed file to the logs folder
+        with open(logs_seed_directory, 'r') as file:
+            logs_seed = json.load(file)
+        
+    else:
+        print("Seeder aborted.")
