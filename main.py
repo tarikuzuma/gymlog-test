@@ -22,10 +22,10 @@ app = Flask(__name__)
 app.config.from_object('config')
 db.init_app(app)
 
-# Suppress werkzeug logging to console (COMMENT OUT IF NOT NEEDED)
-import logging
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+# # Suppress werkzeug logging to console (COMMENT OUT IF NOT NEEDED)
+# import logging
+# log = logging.getLogger('werkzeug')
+# log.setLevel(logging.ERROR)
 
 # Utility function for date and time formatting
 def get_current_datetime():
@@ -103,6 +103,10 @@ def log_user_today(user):
 @app.route('/')
 def home():
     return redirect(url_for('login'))
+
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')
 
 @app.route('/stats_route', methods=['GET', 'POST'])
 def stats_route():
@@ -212,3 +216,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True, port=5001)
+
