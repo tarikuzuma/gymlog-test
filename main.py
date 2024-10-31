@@ -1,3 +1,13 @@
+'''
+    This file contains the main application logic for the Gym Logger. The application is a Flask web application that logs gym sessions of students. The application has the following features:
+        - Register new students
+        - Log in and log out students
+        - View gym status of all students
+        - View individual student stats
+        - View daily login reports
+'''
+
+
 import atexit
 import os
 import json
