@@ -5,20 +5,18 @@
 {% block content %}
     <h1>Available Logs for Login</h1>
     <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>View</th>
-            </tr>
-        </thead>
         <tbody>
-            {% for date in dates %}
-            <tr>
-                <td>{{ date }}</td>
-                <td><a href="/daily_login_report/{{ date }}">View</a></td>
-            </tr>
+            {% for month in organized_logs.keys() %}
+                <tr>
+                    <td colspan="2">{{ month }}</td>
+                </tr>
+                {% for date in organized_logs[month] %}
+                    <tr>
+                        <td>{{ date.split('.')[0] }}</td>  <!-- Display the date without extension -->
+                        <td><a href="/daily_login_report/{{ date.split('.')[0] }}">View</a></td> <!-- Adjust link -->
+                    </tr>
+                {% endfor %}
             {% endfor %}
         </tbody>
     </table>
-
 {% endblock %}
