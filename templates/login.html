@@ -4,25 +4,26 @@
 
 {% block content %}
 
-<div class = "text-center">
-    <h1 class="text-6xl font-bold text-gray-600">APC GYM LOG</h1>
+<div class="text-center">
+    <h1 class="text-9xl font-bold text-gray-600">APC GYM LOG</h1>
 
-    <div class="mt-4 mb-4">
-        <h2 id="date" class = "text-2xl"></h2>
-        <p id="time" class = "text-lg"></p>
+    <div class="mt-6 mb-6 text-center">
+        <h2 id="date" class="text-5xl font-semibold text-gray-700 mb-1"></h2>
+        <p id="time" class="text-3xl font-medium text-gray-500"></p>
     </div>
 
-    
-    <h2 class = "mt-2 mb-2 font-bold text-gray-500 ">Tap your APC Identification ID here to log-in or log-out!</h2>
+    <h2 class="mt-2 mb-2 text-1xl font-bold text-gray-500">Tap your APC Identification ID here to log-in or log-out!</h2>
     {% from "helpers/_formhelpers.html" import render_field %}
     <form method="post" id="autoSubmitInput" action="{{ url_for('login') }}">
         <dl>
-            {{ render_field(form.rfid, class='w-full h-10 p-2 border border-gray-300 rounded') }} 
+            {{ render_field(form.rfid, class='w-1/3 h-1/3 p-2 border border-darkgrey-1000 rounded text-3xl font-medium text-black bg-yellowgreen text-center py-4 mb-20') }}
         </dl>
-        <p><input type="submit" value=""></p>
+        <p>
+            <input type="submit" value="">
+        </p>
     </form>
 
-    {{message}}
+    {{ message }}
 
     <script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
     <script src="{{ url_for('static', filename='js/time.js') }}"></script>
@@ -30,24 +31,22 @@
     <div class="flex justify-center mt-4">
         <ul class="flex space-x-4 items-center">
             <li>
-                <a href="register" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Register</a>
+                <a href="register" class="bg-gray-50 border-0 rounded shadow-md text-gray-800 cursor-pointer inline-flex items-center justify-center h-12 px-4 text-lg font-mono transition-shadow duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-inner">Register</a>
             </li>
             <li>
-                <a href="gym_info" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">All Users</a>
+                <a href="gym_info" class="bg-gray-50 border-0 rounded shadow-md text-gray-800 cursor-pointer inline-flex items-center justify-center h-12 px-4 text-lg font-mono transition-shadow duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-inner">All Users</a>
             </li>
             <li>
-                <a href="stats_route" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Check User Stats</a>
+                <a href="stats_route" class="bg-gray-50 border-0 rounded shadow-md text-gray-800 cursor-pointer inline-flex items-center justify-center h-12 px-4 text-lg font-mono transition-shadow duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-inner">Check User Stats</a>
             </li>
             <li>
-                <a href="daily_login_report" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Daily Logins</a>
+                <a href="daily_login_report" class="bg-gray-50 border-0 rounded shadow-md text-gray-800 cursor-pointer inline-flex items-center justify-center h-12 px-4 text-lg font-mono transition-shadow duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-inner">Daily Logins</a>
             </li>
             <li>
-                <a href="about_us" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">About Us</a>
+                <a href="about_us" class="bg-gray-50 border-0 rounded shadow-md text-gray-800 cursor-pointer inline-flex items-center justify-center h-12 px-4 text-lg font-mono transition-shadow duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-inner">About Us</a>
             </li>
         </ul>
     </div>
-    
-
 </div>
 
 {% if not is_registered %}
@@ -56,18 +55,19 @@
 
 <script>
     function myFunction() {
-    swal({
-        title: "You are not registered",
-        text: "Register now to continue!",
-        icon: "warning",
-        buttons: ["Cancel", "Register"]   
+        swal({
+            title: "You are not registered",
+            text: "Register now to continue!",
+            icon: "warning",
+            buttons: ["Cancel", "Register"]
         })
         .then((willRedirect) => {
-        if (willRedirect) {
-            window.location = "register"
-        }
-        });}
-            myFunction();
+            if (willRedirect) {
+                window.location = "register"
+            }
+        });
+    }
+    myFunction();
 </script>
 
 {% endif %}
