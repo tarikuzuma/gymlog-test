@@ -12,11 +12,11 @@
         <p id="time" class="text-3xl font-medium text-gray-500"></p>
     </div>
 
-    <h2 class="mt-2 mb-2 text-1xl font-bold text-gray-500">Tap your APC Identification ID here to log-in or log-out!</h2>
+    <h2 class="mt-2 mb-10 text-1xl font-bold text-gray-500 ">Tap your APC Identification ID here to log-in or log-out!</h2>
     {% from "helpers/_formhelpers.html" import render_field %}
     <form method="post" id="autoSubmitInput" action="{{ url_for('login') }}">
         <dl>
-            {{ render_field(form.rfid, class='w-1/3 h-1/3 p-2 border border-darkgrey-1000 rounded text-3xl font-medium text-black bg-yellowgreen text-center py-4 mb-20') }}
+            {{ render_field(form.rfid, class='w-1/3 h-1/3 p-2 border border-darkgrey-1000 rounded text-3xl font-medium text-black bg-yellowgreen text-center py-4 mb-5') }}
         </dl>
         <p>
             <input type="submit" value="">
