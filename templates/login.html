@@ -12,15 +12,6 @@
         <p id="time" class = "text-lg"></p>
     </div>
 
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
     
     <h2 class = "mt-2 mb-2 font-bold text-gray-500 ">Tap your APC Identification ID here to log-in or log-out!</h2>
     {% from "helpers/_formhelpers.html" import render_field %}
@@ -58,5 +49,27 @@
     
 
 </div>
+
+{% if not is_registered %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    function myFunction() {
+    swal({
+        title: "You are not registered",
+        text: "Register now to continue!",
+        icon: "warning",
+        buttons: ["Cancel", "Register"]   
+        })
+        .then((willRedirect) => {
+        if (willRedirect) {
+            window.location = "register"
+        }
+        });}
+            myFunction();
+</script>
+
+{% endif %}
 
 {% endblock %}

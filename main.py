@@ -111,14 +111,17 @@ def gym_info():
 # Route for logging in and out students
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    is_registered = True 
     if request.method == 'POST':
         rfid = request.form.get('rfid')
         user = StudentData.query.filter_by(rfid=rfid).first()
         if user:
             toggle_gym_status(user)
             return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))
-        flash("RFID Not Recognized. Please Register.", "error")
-    return render_template('login.html', form=LoginForm())
+        else:
+            is_registered = False 
+    return render_template('login.html', form=LoginForm(), is_registered=is_registered)
+
 
 # Route for toggling gym status
 @app.route('/toggle_gym_status/<string:user_id>', methods=['GET'])
