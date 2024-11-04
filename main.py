@@ -130,6 +130,11 @@ def sort_files_by_date(path):
 def home():
     return redirect(url_for('login'))
 
+ # Route for about_us page
+@app.route('/about_us')
+def about_us():
+    return render_template('about_us.html')
+
 # Route for accessing forms for individual student stats
 @app.route('/stats_route', methods=['GET', 'POST'])
 def stats_route():
@@ -258,3 +263,4 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True, port=5001)
+
