@@ -12,15 +12,6 @@
         <p id="time" class = "text-lg"></p>
     </div>
 
-    {% with messages = get_flashed_messages(with_categories=True) %}
-        {% if messages %}
-            <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
     
     <h2 class = "mt-2 mb-2 font-bold text-gray-500 ">Tap your APC Identification ID here to log-in or log-out!</h2>
     {% from "helpers/_formhelpers.html" import render_field %}
@@ -59,17 +50,17 @@
 
 </div>
 
+{% if not is_registered %}
 <script>
     function myFunction() {
-      var txt;
-      if (confirm("You are not registered!")) {
-        window.location.replace("register");
-      } else {
-        txt = "You pressed Cancel!";
-      }
-      document.getElementById("demo").innerHTML = txt;
+        if (confirm("You are not registered!")) {
+            window.location.replace("register");
+        } else {
+            document.getElementById("demo").innerHTML = "You pressed Cancel!";
+        }
     }
-    myFunction()
+    myFunction();
 </script>
+{% endif %}
 
 {% endblock %}
