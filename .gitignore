@@ -1,9 +1,6 @@
 # Ignore processes.txt
 processes.txt
 
-# Ignore logs folder
-logs/
-
 # Ignore Python cache files
 __pycache__/
 *.py[cod]
@@ -86,6 +83,9 @@ dmypy.json
 instance
 # Ignore VSCode settings
 .vscode/
+
+# Ignore contents of logs folder but not logs folder itself and keep .gitkeep
+logs/*
 
 # Ignore the database file in the instance directory
 instance/spGYM_Log.db

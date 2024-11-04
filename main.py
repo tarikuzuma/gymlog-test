@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.config.from_object('config')
 db.init_app(app)
 
-# # Suppress werkzeug logging to console (COMMENT OUT IF NOT NEEDED)
+# Suppress werkzeug logging to console (COMMENT OUT IF NOT NEEDED)
 # import logging
 # log = logging.getLogger('werkzeug')
 # log.setLevel(logging.ERROR)
@@ -68,7 +68,7 @@ atexit.register(logout_all_users)
 # Log user data
 def log_user_today(user):
     today = datetime.now().strftime('%m-%d-%Y')
-    filepath = os.path.join('Logs', f"{today}.json")
+    filepath = os.path.join('logs', f"{today}.json")
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 
     workout_time = None
@@ -100,14 +100,42 @@ def log_user_today(user):
         json.dump(data, file, indent=4)
     print (f"{get_current_datetime()[1]} : {user.full_name} log saved")
 
+# Function to sort logs by date
+def sort_files_by_date(path):
+    file_list = os.listdir(path)
+    file_list = [file for file in file_list if file.endswith('.json')]
+
+    # Sort files by date (make sure the date format is correct)
+    file_list.sort(key=lambda x: datetime.strptime(x.split('.')[0], '%m-%d-%Y'))
+    logs_by_month = defaultdict(list)
+    logs_by_month_and_year = []
+
+    for file in file_list:
+        date_str = file.split('.')[0]  # Extract date part from filename
+        date_obj = datetime.strptime(date_str, '%m-%d-%Y')
+        month_year_name = date_obj.strftime('%B %Y')
+
+        # Append the file to the corresponding month
+        logs_by_month[month_year_name].append(file)
+
+        # Add to unique months list
+        if month_year_name not in logs_by_month_and_year:
+            logs_by_month_and_year.append(month_year_name)
+
+    # Return both the structured logs and the ordered months list
+    return logs_by_month_and_year, dict(logs_by_month)
+
+# Route for home page only redirects to login page
 @app.route('/')
 def home():
     return redirect(url_for('login'))
 
+ # Route for about_us page
 @app.route('/about_us')
 def about_us():
     return render_template('about_us.html')
 
+# Route for accessing forms for individual student stats
 @app.route('/stats_route', methods=['GET', 'POST'])
 def stats_route():
     form = LoginForm(request.form)
@@ -118,6 +146,7 @@ def stats_route():
         flash('RFID not recognized. Please try again.', 'error')
     return render_template('stats_forms.html', form=form)
 
+# Route for individual student stats
 @app.route('/individual_stats/<string:user_id>')
 def individual_stats(user_id):
     user = StudentData.query.filter_by(student_id=user_id).first_or_404()
@@ -142,6 +171,7 @@ def individual_stats(user_id):
         workout_times=[workout_data[day] for day in sorted(workout_data.keys())]
     )
 
+# Route for registering new students
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegGymLogForm(request.form)
@@ -172,6 +202,7 @@ def gym_info():
     all_logs = sorted(all_logs, key=lambda log: log.status != 'online')
     return render_template('gym_info.html', all_logs=all_logs)
 
+# Route for logging in and out students
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -183,6 +214,7 @@ def login():
         flash("RFID Not Recognized. Please Register.", "error")
     return render_template('login.html', form=LoginForm())
 
+# Route for toggling gym status
 @app.route('/toggle_gym_status/<string:user_id>', methods=['GET'])
 def toggle_gym_status_route(user_id):
     user = StudentData.query.filter_by(student_id=user_id).first_or_404()
@@ -195,12 +227,27 @@ def toggle_gym_status_route(user_id):
         workout_time_message = "Ongoing"
     return render_template('user_auth.html', user=user, workout_time=workout_time_message)
 
+# Route for daily login reports in the past sessions
 @app.route('/daily_login_report/')
 def daily_login_report_dates():
     logs_directory = 'logs'
-    all_dates = {filename[:-5] for filename in os.listdir(logs_directory) if filename.endswith('.json')}
-    return render_template('daily_login_report_dates.html', dates=sorted(all_dates))
+    all_dates = sorted(
+        {datetime.strptime(filename[:-5], '%m-%d-%Y') for filename in os.listdir(logs_directory) if filename.endswith('.json')},
+        reverse=True
+    )
+    sorted_dates = [date.strftime('%m-%d-%Y') for date in all_dates]
+    logs_by_month_and_year, organized_logs = sort_files_by_date(logs_directory)
+    
+    # Sort the months in reverse order to start from the latest
+    organized_logs = dict(sorted(organized_logs.items(), key=lambda item: datetime.strptime(item[0], '%B %Y'), reverse=True))
 
+    # Sort dates within each month in reverse order
+    for month in organized_logs:
+        organized_logs[month].sort(key=lambda date: datetime.strptime(date.split('.')[0], '%m-%d-%Y'), reverse=True)
+
+    return render_template('daily_login_report_dates.html', dates=sorted_dates, available_months=logs_by_month_and_year, organized_logs=organized_logs)
+
+# Route for daily login reports for a specific date
 @app.route('/daily_login_report/<string:date>')
 def daily_login_report(date):
     filepath = os.path.join('logs', f"{date}.json")
