@@ -3,20 +3,33 @@
 {% block title %}Available Logs for Login{% endblock %}
 
 {% block content %}
-    <h1>Available Logs for Login</h1>
-    <table>
-        <tbody>
-            {% for month in organized_logs.keys() %}
-                <tr>
-                    <td colspan="2">{{ month }}</td>
-                </tr>
-                {% for date in organized_logs[month] %}
+    <div class="text-center">
+        <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-white">
+            Available Logs for Log-in
+        </h1>
+    </div>
+    {% for month in organized_logs.keys() %}
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-8"> 
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border border-gray-200">
+                <thead class="bg-gray-300 text-gray-700 uppercase dark:bg-gray-800 dark:text-gray-400">
                     <tr>
-                        <td>{{ date.split('.')[0] }}</td>  <!-- Display the date without extension -->
-                        <td><a href="/daily_login_report/{{ date.split('.')[0] }}">View</a></td> <!-- Adjust link -->
+                        <th colspan="2" class="px-6 py-3 text-lg font-bold">{{ month }}</th>
                     </tr>
-                {% endfor %}
-            {% endfor %}
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    {% set colors = ['bg-gray-50', 'bg-white'] %} <!-- Define your alternating colors -->
+                    {% for date in organized_logs[month] %}
+                        <tr class="border-b border-gray-200 dark:border-gray-700 {{ colors[loop.index0 % 2] }}">
+                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white dark:bg-gray-800">
+                                {{ date.split('.')[0] }} <!-- Display the date without extension -->
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="/daily_login_report/{{ date.split('.')[0] }}" class="text-blue-500 hover:underline">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
 {% endblock %}

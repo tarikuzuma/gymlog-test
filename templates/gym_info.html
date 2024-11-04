@@ -1,50 +1,79 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}All Gym Logs{% endblock %}
+{% block title %}All Gym Users{% endblock %}
 
 {% block content %}
-    <h1>All Gym Logs</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Full Name</th>
-                <th>Student ID Number</th>
-                <th>PE Course</th>
-                <th>Enrolled Block</th>
-                <th>Date and Time of Last Gym </th>
-                <th>Total Workout Time (minutes)</th>
-                <th>Status</th>
-                <th>User Stats</th>
-                <th>Toggle Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for log in all_logs %}
-            <tr>
-                <td>{{ log.full_name }}</td>
-                <td>{{ log.student_id }}</td>
-                <td>{{ log.pe_course }}</td>
-                <td>{{ log.enrolled_block }}</td>
-                <td>{{ log.last_gym }}</td>
-                <td>{{ log.total_workout_time | round }}</td>
-                <td>
-                {% if log.status == 'online' %}
-                        <b class ="font-bold">{{ log.status }}</b>
-                    {% else %}
-                        {{ log.status }}
-                {% endif %}
-                </td>
-                <td><a href = "/individual_stats/{{log.student_id}}">View Stats</a></td>
-                <td>
-                    <form action="{{ url_for('login') }}" method="POST">
-                        <input type="hidden" name="rfid" value="{{ log.rfid }}">
-                        <button type="submit">Toggle Status</button>
-                    </form>
-                </td>                
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex-shrink-0">
+            <a href="/daily_login_report" class="text-blue-500 hover:underline"><- Back to Available Logs</a>
+        </div>
+        <div class="flex-grow text-center mx-4"> <!-- Add horizontal margin for spacing -->
+            <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+                All Gym Users
+            </h1>
+        </div>
+        <div class="flex-shrink-0">
+            <button onclick="window.print()" class="mt-4 px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Print Report</button>
+        </div>
+    </div>
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-300 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th scope="col" class="px-6 py-3">Full Name</th>
+                    <th scope="col" class="px-6 py-3">Student ID Number</th>
+                    <th scope="col" class="px-6 py-3">PE Course</th>
+                    <th scope="col" class="px-6 py-3">Enrolled Block</th>
+                    <th scope="col" class="px-6 py-3">Date and Time of Last Gym</th>
+                    <th scope="col" class="px-6 py-3">Total Workout Time (minutes)</th>
+                    <th scope="col" class="px-6 py-3">Status</th>
+                    <th scope="col" class="px-6 py-3">User Stats</th>
+                    <th scope="col" class="px-6 py-3">Toggle Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set colors = ['bg-gray-100', 'bg-gray-200'] %} <!-- Define your alternating colors -->
+                {% for log in all_logs %}
+                <tr class="border-b dark:border-gray-700 {{ colors[loop.index0 % 2] }}">
+                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ log.full_name }}</td>
+                    <td class="px-6 py-4">{{ log.student_id }}</td>
+                    <td class="px-6 py-4">{{ log.pe_course }}</td>
+                    <td class="px-6 py-4">{{ log.enrolled_block }}</td>
+                    <td class="px-6 py-4">{{ log.last_gym }}</td>
+                    <td class="px-6 py-4">{{ log.total_workout_time | round }}</td>
+                    <td class="px-6 py-4 justify-center items-center my-5">
+                        {% if log.status == 'online' %}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                                <circle cx="8" cy="8" r="8"/>
+                            </svg>
+                        {% else %}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                            </svg>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="/individual_stats/{{ log.student_id }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Stats</a>
+                    </td>
+                    <td class="px-6 py-4 flex justify-center items-center"> <!-- Add flex classes for centering -->
+                        <form action="{{ url_for('login') }}" method="POST" class="flex items-center"> <!-- Add flex classes for centering -->
+                            <input type="hidden" name="rfid" value="{{ log.rfid }}">
+                            <button type="submit" class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggles2 mr-1" viewBox="0 0 16 16">
+                                    <path d="M9.465 10H12a2 2 0 1 1 0 4H9.465c.34-.588.535-1.271.535-2s-.195-1.412-.535-2"/>
+                                    <path d="M6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1a4 4 0 1 1 0-8 4 4 0 0 1 0 8m.535-10a4 4 0 0 1-.409-1H4a1 1 0 0 1 0-2h2.126q.138-.534.41-1H4a2 2 0 1 0 0 4z"/>
+                                    <path d="M14 4a4 4 0 1 1-8 0 4 4 0 0 1 8 0"/>
+                                </svg>
+                                Toggle Status
+                            </button>
+                        </form>
+                    </td>               
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 {% endblock %}
 

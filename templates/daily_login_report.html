@@ -3,45 +3,76 @@
 {% block title %}Logins for {{ date }}{% endblock %}
 
 {% block content %}
-    <h1>Daily Login Report for {{ date }}</h1>
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex-shrink-0">
+            <a href="/daily_login_report" class="text-blue-500 hover:underline"><- Back to Available Logs</a>
+        </div>
+        <div class="flex-grow text-center mx-4"> <!-- Add horizontal margin for spacing -->
+            <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+                Daily Login Report for {{ date }}
+            </h1>
+        </div>
+        <div class="flex-shrink-0">
+            <button onclick="window.print()" class="mt-4 px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Print Report</button>
+        </div>
+    </div>
 
     {% if log_entries %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Full Name</th>
-                    <th>Student ID</th>
-                    <th>Enrolled Block</th>
-                    <th>PE Course</th>
-                    <th>Workout Start</th>
-                    <th>Workout End</th>
-                    <th>Workout Time (mins)</th>
-                    <th>Completed Sessions</th>
-                    <th>View Stats</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entry in log_entries %}
-                <tr>
-                    <td>{{ entry.full_name }}</td>
-                    <td>{{ entry.student_id }}</td>
-                    <td>{{ entry.enrolled_block }}</td>
-                    <td>{{ entry.pe_course }}</td>
-                    <td>{{ entry.workout_start }}</td>
-                    <td>{{ entry.workout_end }}</td>
-                    <td>{{ entry.workout_time }}</td>
-                    <td>{{ entry.completed_sessions }}</td>
-                    <td><a href = "/individual_stats/{{entry.student_id}}">View Stats</a></td>
-
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Full Name</th>
+                        <th scope="col" class="px-6 py-3">Student ID</th>
+                        <th scope="col" class="px-6 py-3">Enrolled Block</th>
+                        <th scope="col" class="px-6 py-3">PE Course</th>
+                        <th scope="col" class="px-6 py-3">Workout Start</th>
+                        <th scope="col" class="px-6 py-3">Workout End</th>
+                        <th scope="col" class="px-6 py-3">Workout Time (mins)</th>
+                        <th scope="col" class="px-6 py-3">Completed Sessions</th>
+                        <th scope="col" class="px-6 py-3">View Stats</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set colors = ['bg-white', 'bg-gray-50'] %} <!-- Define your alternating colors -->
+                    {% for entry in log_entries %}
+                    <tr class="border-b dark:border-gray-700 {{ colors[loop.index0 % 2] }}">
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ entry.full_name }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ entry.student_id }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ entry.enrolled_block }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ entry.pe_course }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ entry.workout_start }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ entry.workout_end }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ entry.workout_time }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ entry.completed_sessions }}
+                        </td>
+                        <td class="px-6 py-4">
+                            <a href="/individual_stats/{{ entry.student_id }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Stats</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
         <p>No login records found for {{ date }}.</p>
     {% endif %}
 
-    <button onclick="window.print()">Print Report</button>
 
+    
 {% endblock %}
-
