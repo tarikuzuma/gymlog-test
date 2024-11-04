@@ -51,16 +51,25 @@
 </div>
 
 {% if not is_registered %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 <script>
     function myFunction() {
-        if (confirm("You are not registered!")) {
-            window.location.replace("register");
-        } else {
-            document.getElementById("demo").innerHTML = "You pressed Cancel!";
+    swal({
+        title: "You are not registered",
+        text: "Register now to continue!",
+        icon: "warning",
+        buttons: ["Cancel", "Register"]   
+        })
+        .then((willRedirect) => {
+        if (willRedirect) {
+            window.location = "register"
         }
-    }
-    myFunction();
+        });}
+            myFunction();
 </script>
+
 {% endif %}
 
 {% endblock %}
