@@ -59,4 +59,17 @@
 
 </div>
 
+<script>
+    function myFunction() {
+      var txt;
+      if (confirm("You are not registered!")) {
+        window.location.replace("register");
+      } else {
+        txt = "You pressed Cancel!";
+      }
+      document.getElementById("demo").innerHTML = txt;
+    }
+    myFunction()
+</script>
+
 {% endblock %}
