@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" class = "absolute inset-0 -z-10 h-full w-full px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#e0f7fa_40%,#dcf235_100%)]">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/RF.png') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> -->    
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class = "h-14 bg-gradient-to-r from-stone-400 to-green-200">
     
-    <div class ="HomeContent">
-        {% block content %}
-        
-        {% endblock %}
-
-        <a href="/">Home</a>
-    </div>
+        <div class="absolute h-full w-full px-5 mt-5 mb-20 ">
+            <a href="/" class="mt-6">
+                <img src="{{ url_for('static', filename='images/RF.png') }}" alt="Logo" class="h-10"> <!-- Adjust 'logo.png' and class as needed -->
+            </a>
+            {% block content %}
+                <!-- Content goes here -->
+            {% endblock %}
+            
+        </div>   
 
     <!--Removes autocomplete for all forms-->
     <script src="{{ url_for('static', filename='js/autoCompleteOff.js') }}"></script>
