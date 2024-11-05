@@ -111,17 +111,25 @@ def gym_info():
 # Route for logging in and out students
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    is_registered = True 
+    is_registered = True
+    is_full = False
     if request.method == 'POST':
         rfid = request.form.get('rfid')
         user = StudentData.query.filter_by(rfid=rfid).first()
         if user:
-            toggle_gym_status(user)
-            return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))
+            if user.status == "online":
+                toggle_gym_status(user)
+                return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))
+            else:
+                if StudentData.query.filter_by(status="online").count() >= app.config['MAX_USERS']:
+                    is_full = True  # Gym is full, so prevent login
+                else:
+                    toggle_gym_status(user)
+                    return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))
         else:
-            is_registered = False 
-    return render_template('login.html', form=LoginForm(), is_registered=is_registered)
+            is_registered = False
 
+    return render_template('login.html', form=LoginForm(), is_registered=is_registered, is_full=is_full)
 
 # Route for toggling gym status
 @app.route('/toggle_gym_status/<string:user_id>', methods=['GET'])
