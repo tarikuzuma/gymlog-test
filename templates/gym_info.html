@@ -9,7 +9,8 @@
         </div>
         <div class="flex-grow text-center mx-4"> <!-- Add horizontal margin for spacing -->
             <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
-                All Gym Users
+                All Gym Users <br>
+                <span class="text-base font-normal text-gray-500 dark:text-gray-400">Online: {{ total_online }}</span>
             </h1>
         </div>
         <div class="flex-shrink-0">
@@ -40,7 +41,14 @@
                     <td class="px-6 py-4">{{ log.student_id }}</td>
                     <td class="px-6 py-4">{{ log.pe_course }}</td>
                     <td class="px-6 py-4">{{ log.enrolled_block }}</td>
-                    <td class="px-6 py-4">{{ log.last_gym }}</td>
+                    <td class="px-6 py-4">
+                        {% if log.last_gym %}
+                            Date: {{ log.last_gym.strftime('%Y-%m-%d')}} <br>
+                            Time: {{ log.last_gym.strftime('%H:%M:%S')}} 
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
                     <td class="px-6 py-4">{{ log.total_workout_time | round }}</td>
                     <td class="px-6 py-4 justify-center items-center my-5">
                         {% if log.status == 'online' %}

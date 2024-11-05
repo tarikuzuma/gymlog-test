@@ -105,8 +105,10 @@ def register():
 @app.route('/gym_info')
 def gym_info():
     all_logs = StudentData.query.all()
-    all_logs = sorted(all_logs, key=lambda log: log.status != 'online')
-    return render_template('gym_info.html', all_logs=all_logs)
+    # Sort so that online users appear at the top, offline users below
+    all_logs = sorted(all_logs, key=lambda log: log.status == 'offline')
+    total_online = StudentData.query.filter_by(status="online").count()
+    return render_template('gym_info.html', all_logs=all_logs, total_online=total_online)
 
 # Route for logging in and out students
 @app.route('/login', methods=['GET', 'POST'])
