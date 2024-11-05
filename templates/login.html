@@ -72,4 +72,21 @@
 
 {% endif %}
 
+{% if is_full %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    function myFunction() {
+        swal({
+            title: "Gym is Full",
+            text: "Please wait for someone to log-out or finish their workout!",
+            icon: "error",
+            button: "Awww! Alright",
+        });
+    }
+    myFunction();
+</script>
+
+{% endif %}
+
 {% endblock %}

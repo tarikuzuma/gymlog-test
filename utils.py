@@ -36,7 +36,7 @@ def logout_all_users(app):
         online_users = StudentData.query.filter_by(status='online').all()
         for user in online_users:
             user.status = 'offline'
-            user.last_gym = datetime.now()
+            user.last_gym = datetime.now().replace(microsecond=0)
             if user.last_login:
                 user.total_workout_time += (user.last_gym - user.last_login).total_seconds() / 60
             log_user_today(user)
