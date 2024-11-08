@@ -34,7 +34,7 @@
                     <strong class="font-semibold">Total Workout Time This Session: </strong>
                     {{ workout_time }}
                 </p>                
-                <p class="text-gray-700"><strong class="font-semibold">Overall Total Workout Time:</strong> {{ user.total_workout_time }} minutes</p>
+                <p class="text-gray-700"><strong class="font-semibold">Overall Total Workout Time:</strong> {{ user.total_workout_time | round }} minutes</p>
                 <p class="text-gray-700"><strong class="font-semibold">Total Workout Sessions:</strong> {{ user.completed_sessions }}</p>
             </div>
 
