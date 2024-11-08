@@ -103,7 +103,7 @@ def register():
         return redirect(url_for('home'))
     return render_template('register.html', form=form)
 
-# Route for all gym loggers
+# Route for all gym users
 @app.route('/gym_info')
 def gym_info():
     page = request.args.get(get_page_parameter(), type=int, default=1)
@@ -122,6 +122,36 @@ def gym_info():
         pagination=pagination_data
     )
 
+# Route for gym users by course
+@app.route('/gym_info/<string:course>')
+def gym_info_by_course(course):
+    block = request.args.get('block', default=None, type=str)
+    name_startswith = request.args.get('name_startswith', default=None, type=str)
+
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = 20
+
+    query = StudentData.query.filter_by(pe_course=course)
+
+    # Apply the additional filters if provided
+    if block:
+        query = query.filter(StudentData.enrolled_block.like(f"{block}%"))
+    if name_startswith:
+        query = query.filter(StudentData.full_name.like(f"{name_startswith}%"))
+    
+    # Pagination
+    pagination_data = query.order_by(StudentData.status.desc()).paginate(page=page, per_page=per_page, error_out=False)
+
+    all_logs = pagination_data.items
+    total_online = StudentData.query.filter_by(status="online").count()
+
+    return render_template(
+        'gym_info.html',
+        all_logs=all_logs,
+        total_online=total_online,
+        pagination=pagination_data,
+        course=course  # Pass the course to the template to maintain the filter
+    )
 
 # Route for logging in and out students
 @app.route('/login', methods=['GET', 'POST'])

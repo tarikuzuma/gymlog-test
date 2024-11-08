@@ -3,11 +3,11 @@
 {% block title %}All Gym Users{% endblock %}
 
 {% block content %}
-    <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center justify-between mb-4 mr-4 ml-4">
         <div class="flex-shrink-0">
             <a href="/daily_login_report" class="text-blue-500 hover:underline"><- Back to Available Logs</a>
         </div>
-        <div class="flex-grow text-center mx-4"> <!-- Add horizontal margin for spacing -->
+        <div class="flex-grow text-center mx-4">
             <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
                 All Gym Users <br>
                 <span class="text-base font-normal text-gray-500 dark:text-gray-400">Online: {{ total_online }}</span>
@@ -17,6 +17,53 @@
             <button onclick="window.print()" class="mt-4 px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Print Report</button>
         </div>
     </div>
+
+    
+    <div class="relative inline-block text-left mb-5">
+        <button id="dropdownDefaultButton" onclick="toggleDropdown()" class="text-white bg-stone-700 hover:bg-stone-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+            Filter by
+            <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+            </svg>
+        </button>
+        
+        <div id="dropdown" class="z-10 hidden absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700" style="top: 100%; left: 0;">
+            <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+                <li>
+                    <a href="{{ url_for('gym_info_by_course', course='PE1') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">PEDU1</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('gym_info_by_course', course='PE2') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">PEDU2</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('gym_info_by_course', course='PE3') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">PEDU3</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('gym_info_by_course', course='PE4') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">PEDU4</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('gym_info_by_course', course='None') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">None</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+    function toggleDropdown() {
+        const dropdown = document.getElementById('dropdown');
+        dropdown.classList.toggle('hidden');
+    }
+
+    document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('dropdown');
+    const button = document.getElementById('dropdownDefaultButton');
+    
+    if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.add('hidden');
+    }
+    });
+    </script>
+    
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -89,14 +136,14 @@
                 <ul class="inline-flex -space-x-px">
                     {% if pagination.has_prev %}
                         <li>
-                            <a href="{{ url_for('gym_info', page=pagination.prev_num) }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"> << </a>
+                            <a href="{{ url_for('gym_info_by_course', course=course, page=pagination.prev_num) }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"> << </a>
                         </li>
                     {% endif %}
                     
                     {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
                         {% if page_num %}
                             <li>
-                                <a href="{{ url_for('gym_info', page=page_num) }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{ page_num }}</a>
+                                <a href="{{ url_for('gym_info_by_course', course=course, page=page_num) }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{ page_num }}</a>
                             </li>
                         {% else %}
                             <li class="disabled"><span class="px-3 py-2">...</span></li>
@@ -105,13 +152,13 @@
                     
                     {% if pagination.has_next %}
                         <li>
-                            <a href="{{ url_for('gym_info', page=pagination.next_num) }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"> >> </a>
+                            <a href="{{ url_for('gym_info_by_course', course=course, page=pagination.next_num) }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"> >> </a>
                         </li>
                     {% endif %}
                 </ul>
             </nav>
         {% endif %}
-    </div>
+    </div>    
 
 {% endblock %}
 
