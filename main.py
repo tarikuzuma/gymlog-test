@@ -20,7 +20,8 @@ from forms import RegGymLogForm, LoginForm
 from flask_paginate import Pagination, get_page_parameter
 
 
-from utils import get_current_datetime, toggle_gym_status, logout_all_users, log_user_today, sort_files_by_date
+
+from utils import get_current_datetime, toggle_gym_status, logout_all_users, log_user_today, sort_files_by_date, get_paginated_data
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -103,14 +104,20 @@ def register():
         return redirect(url_for('home'))
     return render_template('register.html', form=form)
 
-# Route for all gym users
+# Route for all gym users. SORTED BY STATUS FIRST, NO NAME
 @app.route('/gym_info')
 def gym_info():
     page = request.args.get(get_page_parameter(), type=int, default=1)
     per_page = 20
 
-    total_logs = StudentData.query.count()
-    pagination_data = StudentData.query.order_by(StudentData.status.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    # Get paginated data
+    pagination_data = get_paginated_data(
+        StudentData.query, 
+        page=page, 
+        per_page=per_page,
+        order_by_field=StudentData.status,  # Sort by status, descending
+        order_direction="desc"
+    )
 
     all_logs = pagination_data.items  # Get items for the current page
     total_online = StudentData.query.filter_by(status="online").count()
@@ -122,7 +129,7 @@ def gym_info():
         pagination=pagination_data
     )
 
-# Route for gym users by course
+# Route for gym users by course. AS OF NOW ITS SORTED BY NAME FIRST NOT STATUS THEN NAME
 @app.route('/gym_info/<string:course>')
 def gym_info_by_course(course):
     block = request.args.get('block', default=None, type=str)
@@ -131,16 +138,21 @@ def gym_info_by_course(course):
     page = request.args.get(get_page_parameter(), type=int, default=1)
     per_page = 20
 
-    query = StudentData.query.filter_by(pe_course=course)
+    # Build filter dictionary
+    filters = {
+        StudentData.enrolled_block: block,
+        StudentData.full_name: name_startswith
+    }
 
-    # Apply the additional filters if provided
-    if block:
-        query = query.filter(StudentData.enrolled_block.like(f"{block}%"))
-    if name_startswith:
-        query = query.filter(StudentData.full_name.like(f"{name_startswith}%"))
-    
-    # Pagination
-    pagination_data = query.order_by(StudentData.status.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    # Get paginated data with filters and sorting
+    pagination_data = get_paginated_data(
+        StudentData.query.filter_by(pe_course=course), 
+        page=page, 
+        per_page=per_page,
+        order_by_field=StudentData.enrolled_block,  # Sort by enrolled_block ascending
+        order_direction="asc",
+        filters=filters
+    )
 
     all_logs = pagination_data.items
     total_online = StudentData.query.filter_by(status="online").count()

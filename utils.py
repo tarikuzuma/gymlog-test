@@ -103,3 +103,20 @@ def sort_files_by_date(path):
     # Return both the structured logs and the ordered months list
     return logs_by_month_and_year, dict(logs_by_month)
 
+def get_paginated_data(query, page=1, per_page=20, order_by_field=None, order_direction="asc", filters=None):
+    # Apply additional filters if any
+    if filters:
+        for filter_field, filter_value in filters.items():
+            if filter_value:
+                query = query.filter(filter_field.like(f"{filter_value}%"))
+    
+    # Apply sorting if specified
+    if order_by_field:
+        if order_direction == "asc":
+            query = query.order_by(order_by_field.asc())
+        else:
+            query = query.order_by(order_by_field.desc())
+
+    # Pagination
+    return query.paginate(page=page, per_page=per_page, error_out=False)
+
