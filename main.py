@@ -17,6 +17,8 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from models import db, StudentData
 from forms import RegGymLogForm, LoginForm
+from flask_paginate import Pagination, get_page_parameter
+
 
 from utils import get_current_datetime, toggle_gym_status, logout_all_users, log_user_today, sort_files_by_date
 
@@ -104,11 +106,22 @@ def register():
 # Route for all gym loggers
 @app.route('/gym_info')
 def gym_info():
-    all_logs = StudentData.query.all()
-    # Sort so that online users appear at the top, offline users below
-    all_logs = sorted(all_logs, key=lambda log: log.status == 'offline')
+    page = request.args.get(get_page_parameter(), type=int, default=1)
+    per_page = 20
+
+    total_logs = StudentData.query.count()
+    pagination_data = StudentData.query.order_by(StudentData.status.desc()).paginate(page=page, per_page=per_page, error_out=False)
+
+    all_logs = pagination_data.items  # Get items for the current page
     total_online = StudentData.query.filter_by(status="online").count()
-    return render_template('gym_info.html', all_logs=all_logs, total_online=total_online)
+
+    return render_template(
+        'gym_info.html', 
+        all_logs=all_logs, 
+        total_online=total_online, 
+        pagination=pagination_data
+    )
+
 
 # Route for logging in and out students
 @app.route('/login', methods=['GET', 'POST'])

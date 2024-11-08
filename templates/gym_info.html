@@ -83,5 +83,35 @@
         </table>
     </div>
 
+    <div class="mt-4">
+        {% if pagination %}
+            <nav aria-label="Page navigation example">
+                <ul class="inline-flex -space-x-px">
+                    {% if pagination.has_prev %}
+                        <li>
+                            <a href="{{ url_for('gym_info', page=pagination.prev_num) }}" class="px-3 py-2 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"> << </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if page_num %}
+                            <li>
+                                <a href="{{ url_for('gym_info', page=page_num) }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">{{ page_num }}</a>
+                            </li>
+                        {% else %}
+                            <li class="disabled"><span class="px-3 py-2">...</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if pagination.has_next %}
+                        <li>
+                            <a href="{{ url_for('gym_info', page=pagination.next_num) }}" class="px-3 py-2 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"> >> </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+
 {% endblock %}
 
