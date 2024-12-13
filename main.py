@@ -176,6 +176,12 @@ def daily_login_report(date):
             log_entries = json.load(file)
     return render_template('daily_login_report.html', date=date, log_entries=log_entries)
 
+
+# Route to access settings
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+
 if __name__ == "__main__":
     print (f"{get_current_datetime()[0]} {get_current_datetime()[1]} : Starting server...")
     print(f"{get_current_datetime()[0]} {get_current_datetime()[1]} : Hello, welcome to the Gym Logger!")
