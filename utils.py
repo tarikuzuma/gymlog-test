@@ -103,3 +103,10 @@ def sort_files_by_date(path):
     # Return both the structured logs and the ordered months list
     return logs_by_month_and_year, dict(logs_by_month)
 
+def read_json(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
+
+def write_json(file_path, data):
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)

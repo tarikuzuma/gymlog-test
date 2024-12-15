@@ -18,7 +18,7 @@ from flask_sqlalchemy import SQLAlchemy
 from models import db, StudentData
 from forms import RegGymLogForm, LoginForm
 
-from utils import get_current_datetime, toggle_gym_status, logout_all_users, log_user_today, sort_files_by_date
+from utils import get_current_datetime, toggle_gym_status, logout_all_users, log_user_today, sort_files_by_date, read_json
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -113,6 +113,10 @@ def gym_info():
 # Route for logging in and out students
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    settings_directory = 'instance/settings.json'
+    settings_data = read_json(settings_directory)
+    max_users = settings_data.get('max_users', 10)
+
     is_registered = True
     is_full = False
     if request.method == 'POST':
@@ -123,7 +127,7 @@ def login():
                 toggle_gym_status(user)
                 return redirect(url_for('toggle_gym_status_route', user_id=user.student_id))
             else:
-                if StudentData.query.filter_by(status="online").count() >= app.config['MAX_USERS']:
+                if StudentData.query.filter_by(status="online").count() >= max_users:
                     is_full = True  # Gym is full, so prevent login
                 else:
                     toggle_gym_status(user)
@@ -181,7 +185,6 @@ def daily_login_report(date):
 def settings():
     settings_directory = 'instance/settings.json'
 
-    # Load settings
     with open(settings_directory, 'r') as file:
         settings_data = json.load(file)
 
@@ -193,14 +196,12 @@ def settings():
         max_users_post = request.form.get('max_users')
         max_mins_per_session_post = request.form.get('max_mins_per_session')
 
-        # Update only if the new value is provided and valid
         if max_users_post and max_users_post.isdigit():
-            max_users = int(max_users_post)  # Update max_users if valid
+            max_users = int(max_users_post)  
         
         if max_mins_per_session_post and max_mins_per_session_post.isdigit():
-            max_mins_per_session = int(max_mins_per_session_post)  # Update max_mins_per_session if valid
+            max_mins_per_session = int(max_mins_per_session_post)  
 
-        # Save updated settings back to the JSON file
         with open(settings_directory, 'w') as file:
             json.dump({
                 'max_users': max_users,
