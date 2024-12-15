@@ -177,18 +177,42 @@ def daily_login_report(date):
     return render_template('daily_login_report.html', date=date, log_entries=log_entries)
 
 
-# Route to access settings
-@app.route('/settings')
+@app.route('/settings', methods=['GET', 'POST'])
 def settings():
     settings_directory = 'instance/settings.json'
 
+    # Load settings
     with open(settings_directory, 'r') as file:
         settings_data = json.load(file)
 
-        max_users = settings_data['max_users']
-        max_mins_per_session = settings_data['max_mins_per_session']
+    max_users = settings_data['max_users']
+    max_mins_per_session = settings_data['max_mins_per_session']
 
-    return render_template('settings.html' , max_users=max_users, max_mins_per_session=max_mins_per_session)
+    if request.method == 'POST':
+        # Get form data
+        max_users_post = request.form.get('max_users')
+        max_mins_per_session_post = request.form.get('max_mins_per_session')
+
+        # Update only if the new value is provided and valid
+        if max_users_post and max_users_post.isdigit():
+            max_users = int(max_users_post)  # Update max_users if valid
+        
+        if max_mins_per_session_post and max_mins_per_session_post.isdigit():
+            max_mins_per_session = int(max_mins_per_session_post)  # Update max_mins_per_session if valid
+
+        # Save updated settings back to the JSON file
+        with open(settings_directory, 'w') as file:
+            json.dump({
+                'max_users': max_users,
+                'max_mins_per_session': max_mins_per_session
+            }, file, indent=4)
+
+        # Return the updated values with is_admin = True
+        return render_template('settings.html', max_users=max_users, max_mins_per_session=max_mins_per_session, is_admin=True)
+
+    # For GET requests, return the current values
+    return render_template('settings.html', max_users=max_users, max_mins_per_session=max_mins_per_session, is_admin=False)
+
 
 if __name__ == "__main__":
     print (f"{get_current_datetime()[0]} {get_current_datetime()[1]} : Starting server...")

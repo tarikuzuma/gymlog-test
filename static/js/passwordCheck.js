@@ -1,5 +1,5 @@
 function myFunction() {
-    const correctPassword = "yourPassword";  // Replace with your desired password
+    const correctPassword = "PEDUCATION";  // Replace with your desired password
 
     swal({
         title: "Enter password:",

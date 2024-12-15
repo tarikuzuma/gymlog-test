@@ -3,9 +3,17 @@
 {% block title %}Settings{% endblock %}
 
 {% block content %}
-    <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ url_for('static', filename='js/passwordCheck.js') }}"></script>
-    <body onload="myFunction()">  -->
+
+    <!-- Trigger the alert only if user is not admin -->
+    {% if not is_admin %}
+    <script>
+        window.onload = function() {
+            myFunction();  // Trigger SweetAlert
+        };
+    </script>
+    {% endif %}
 
     <div class="flex-grow text-center mx-4"> <!-- Add horizontal margin for spacing -->
         <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
