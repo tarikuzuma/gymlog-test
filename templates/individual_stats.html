@@ -1,6 +1,6 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}{{user.full_name}}{% endblock %}
+{% block title %}{{user.full_name}} Stats{% endblock %}
 
 {% block content %}
     <h1>User Stats</h1>
@@ -13,42 +13,25 @@
     <p><strong>Total Workout Time:</strong> {{ user.total_workout_time | round }} minutes</p>
     <p><strong>Total Workout Sessions:</strong> {{ user.completed_sessions }}</p>
 
+    <div id="cal-heatmap"></div>
+    <script src="https://unpkg.com/cal-heatmap/dist/cal-heatmap.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <canvas id="gym_frequency" width="900" height="400"></canvas>
-    
     <script>
-        var ctx = document.getElementById('gym_frequency').getContext('2d');
-        var lineChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ workout_days | tojson | safe }}, // X-axis: Days
-                datasets: [{
-                    label: 'Total Workout Time (minutes)',
-                    data: {{ workout_times | tojson | safe }}, // Y-axis: Total Workout Time
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1,
-                    fill: true
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Days'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Total Workout Time (minutes)'
-                        },
-                        beginAtZero: true
-                    }
-                }
-            }
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Initializing Cal-Heatmap...");
+            const cal = new CalHeatmap();
+            cal.paint({
+                itemSelector: "#cal-heatmap",
+                range: 12, 
+                domain: "month",
+                subDomain: "day", 
+                data: "/path/to/your/data",
+                start: new Date(), 
+                legend: [1, 3, 5, 10], 
+                tooltip: true, 
+                cellSize: 15 
+            });
         });
     </script>
 

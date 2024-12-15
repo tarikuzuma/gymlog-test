@@ -14,10 +14,7 @@ function myFunction() {
     }).then((value) => {
         if (value) {
             if (value === correctPassword) {
-                swal("You have entered!", "", "success").then(() => {
-                    // Close the popup and proceed
-                    window.location.href = '/';  // Redirect to the desired location
-                });
+                swal("You have entered!", "", "success");
             } else {
                 swal("Incorrect password!", "Please try again.", "error").then(() => {
                     // Reprompt the user
