@@ -180,7 +180,15 @@ def daily_login_report(date):
 # Route to access settings
 @app.route('/settings')
 def settings():
-    return render_template('settings.html')
+    settings_directory = 'instance/settings.json'
+
+    with open(settings_directory, 'r') as file:
+        settings_data = json.load(file)
+
+        max_users = settings_data['max_users']
+        max_mins_per_session = settings_data['max_mins_per_session']
+
+    return render_template('settings.html' , max_users=max_users, max_mins_per_session=max_mins_per_session)
 
 if __name__ == "__main__":
     print (f"{get_current_datetime()[0]} {get_current_datetime()[1]} : Starting server...")

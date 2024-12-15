@@ -3,13 +3,34 @@
 {% block title %}Settings{% endblock %}
 
 {% block content %}
-    <!-- Include SweetAlert library -->
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-    <!-- Link to the external JS file -->
+    <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="{{ url_for('static', filename='js/passwordCheck.js') }}"></script>
+    <body onload="myFunction()">  -->
 
-    <body onload="myFunction()"> <!-- Call the function when the page loads -->
+    <div class="flex-grow text-center mx-4"> <!-- Add horizontal margin for spacing -->
+        <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+            Settings
+        </h1>
+    </div>
 
-
+    <div class = "flex-col ml-20 mt-20 font-normal leading-none tracking-tight">
+        <div> 
+            Max Users: 
+            <form action="/settings" method="post">
+                <input type="number" name="max_users" placeholder="{{ max_users }}" min="1" required>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+        
+        <div> 
+            Max Mins Per Session:
+            <form action="/settings" method="post">
+                <input type="number" name="max_mins_per_session" placeholder="{{ max_mins_per_session }}" min="1" required>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+        <div> Reset PE Course </div>
+    </div>
+    <!-- Reset PE Course -->
+    
 {% endblock %}
