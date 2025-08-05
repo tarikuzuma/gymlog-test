@@ -1,7 +1,7 @@
 
-# Gym Logger System
+# Gym Log App for APC Gym
 
-A Flask-based gym tracking system for managing student workout sessions.
+A Flask-based gym tracking system for managing student workout sessions at APC Gym.
 
 ## Features
 
