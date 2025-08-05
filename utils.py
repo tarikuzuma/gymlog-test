@@ -23,9 +23,14 @@ def toggle_gym_status(user):
         user.status = 'offline'
         user.last_gym = now.replace(microsecond=0)
         if user.last_login:
-            workout_duration = round((now - user.last_login).total_seconds() / 60, 2)
+            # Calculate workout time more accurately
+            workout_duration = (now - user.last_login).total_seconds() / 60
+            # Round to 2 decimal places for accuracy
+            workout_duration = round(workout_duration, 2)
             user.total_workout_time += workout_duration
-        user.completed_sessions += 1
+            # Only increment completed sessions if workout was longer than 1 minute
+            if workout_duration >= 1.0:
+                user.completed_sessions += 1
         print (f"{get_current_datetime()[1]} : {user.full_name} logged out.")
     user.last_gym_formatted = user.last_gym.strftime("%B %d, %Y %H:%M:%S") if user.last_gym else None
     db.session.commit()
@@ -38,7 +43,12 @@ def logout_all_users(app):
             user.status = 'offline'
             user.last_gym = datetime.now().replace(microsecond=0)
             if user.last_login:
-                user.total_workout_time += (user.last_gym - user.last_login).total_seconds() / 60
+                workout_duration = (user.last_gym - user.last_login).total_seconds() / 60
+                workout_duration = round(workout_duration, 2)
+                user.total_workout_time += workout_duration
+                # Only count as completed session if workout was longer than 1 minute
+                if workout_duration >= 1.0:
+                    user.completed_sessions += 1
             log_user_today(user)
         db.session.commit()
     print(f"{get_current_datetime()[0]} {get_current_datetime()[1]} : All users logged out due to server shutdown.")
@@ -80,8 +90,16 @@ def log_user_today(user):
 
 # Function to sort logs by date
 def sort_files_by_date(path):
+    # Check if directory exists
+    if not os.path.exists(path):
+        return [], {}
+    
     file_list = os.listdir(path)
     file_list = [file for file in file_list if file.endswith('.json')]
+    
+    # If no files found, return empty results
+    if not file_list:
+        return [], {}
 
     # Sort files by date (make sure the date format is correct)
     file_list.sort(key=lambda x: datetime.strptime(x.split('.')[0], '%m-%d-%Y'))

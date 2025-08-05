@@ -3,33 +3,64 @@
 {% block title %}Available Logs for Login{% endblock %}
 
 {% block content %}
-    <div class="text-center">
-        <h1 class="mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 md:text-2xl lg:text-2xl dark:text-white">
-            Available Logs for Log-in
-        </h1>
-    </div>
-    {% for month in organized_logs.keys() %}
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-8"> 
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border border-gray-200">
-                <thead class="bg-gray-300 text-gray-700 uppercase dark:bg-gray-800 dark:text-gray-400">
-                    <tr>
-                        <th colspan="2" class="px-6 py-3 text-lg font-bold">{{ month }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% set colors = ['bg-gray-50', 'bg-white'] %} <!-- Define your alternating colors -->
-                    {% for date in organized_logs[month] %}
-                        <tr class="border-b border-gray-200 dark:border-gray-700 {{ colors[loop.index0 % 2] }}">
-                            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white dark:bg-gray-800">
-                                {{ date.split('.')[0] }} <!-- Display the date without extension -->
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <a href="/daily_login_report/{{ date.split('.')[0] }}" class="text-blue-500 hover:underline">View</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex-shrink-0">
+            <a href="/" class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Home</a>
         </div>
-    {% endfor %}
+        <div class="flex-grow text-center mx-4">
+            <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+                Available Logs for Log-in
+            </h1>
+        </div>
+        <div class="flex-shrink-0">
+            <a href="/student_summary" class="px-4 py-2 text-white bg-purple-600 rounded hover:bg-purple-700">Summary Report</a>
+        </div>
+    </div>
+
+    {% if organized_logs %}
+        {% for month in organized_logs.keys() %}
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg mb-8"> 
+                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 border border-gray-200">
+                    <thead class="bg-gray-300 text-gray-700 uppercase dark:bg-gray-800 dark:text-gray-400">
+                        <tr>
+                            <th colspan="2" class="px-6 py-3 text-lg font-bold">{{ month }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set colors = ['bg-gray-50', 'bg-white'] %}
+                        {% for date in organized_logs[month] %}
+                            <tr class="border-b border-gray-200 dark:border-gray-700 {{ colors[loop.index0 % 2] }}">
+                                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white dark:bg-gray-800">
+                                    {{ date.split('.')[0] }}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="/daily_login_report/{{ date.split('.')[0] }}" class="text-blue-500 hover:underline">View</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="bg-white p-8 rounded-lg shadow-md text-center">
+            <div class="mb-4">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Log Files Found</h3>
+            <p class="text-gray-500 mb-4">
+                No workout log files are available yet. Log files will appear here once students start using the gym.
+            </p>
+            <div class="space-x-4">
+                <a href="/register" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                    Register Students
+                </a>
+                <a href="/gym_info" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    View Gym Info
+                </a>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}

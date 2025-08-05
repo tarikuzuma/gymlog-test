@@ -1,0 +1,166 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Student Summary Report{% endblock %}
+
+{% block content %}
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex-shrink-0">
+            <a href="/" class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Home</a>
+        </div>
+        <div class="flex-grow text-center mx-4">
+            <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+                Student Summary Report
+            </h1>
+        </div>
+        <div class="flex-shrink-0">
+            <button onclick="window.print()" class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Print Report</button>
+        </div>
+    </div>
+
+    <!-- Date Filter Form -->
+    <div class="bg-white p-4 rounded-lg shadow-md mb-6 print:hidden">
+        <h3 class="text-lg font-semibold mb-3">Filter by Date Range</h3>
+        <form method="GET" class="flex flex-wrap gap-4 items-end">
+            <div>
+                <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}" 
+                       class="px-3 py-2 border border-gray-300 rounded-md">
+            </div>
+            <div>
+                <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date or '' }}" 
+                       class="px-3 py-2 border border-gray-300 rounded-md">
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Filter</button>
+                <a href="/student_summary" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Summary Statistics -->
+    {% if student_summaries %}
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">Summary Statistics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-blue-800">Total Students</h3>
+                    <p class="text-2xl font-bold text-blue-600">{{ student_summaries|length }}</p>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-green-800">Active Students</h3>
+                    <p class="text-2xl font-bold text-green-600">
+                        {{ student_summaries|selectattr('total_sessions', 'gt', 0)|list|length }}
+                    </p>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-purple-800">Total Sessions</h3>
+                    <p class="text-2xl font-bold text-purple-600">
+                        {{ student_summaries|sum(attribute='total_sessions') }}
+                    </p>
+                </div>
+                <div class="text-center p-4 bg-orange-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-orange-800">Total Hours</h3>
+                    <p class="text-2xl font-bold text-orange-600">
+                        {{ "%.1f"|format((student_summaries|sum(attribute='total_workout_time')) / 60) }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Details Table -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h2 class="text-xl font-semibold">Student Details</h2>
+                <p class="text-sm text-gray-600 mt-1">
+                    {% if start_date or end_date %}
+                        Filtered by date range
+                        {% if start_date %}from {{ start_date }}{% endif %}
+                        {% if end_date %}to {{ end_date }}{% endif %}
+                    {% else %}
+                        All time data
+                    {% endif %}
+                </p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Rank</th>
+                            <th scope="col" class="px-6 py-3">Student Name</th>
+                            <th scope="col" class="px-6 py-3">Student ID</th>
+                            <th scope="col" class="px-6 py-3">PE Course</th>
+                            <th scope="col" class="px-6 py-3">Block</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                            <th scope="col" class="px-6 py-3">Total Time</th>
+                            <th scope="col" class="px-6 py-3">Sessions</th>
+                            <th scope="col" class="px-6 py-3">Avg Time</th>
+                            <th scope="col" class="px-6 py-3">First Session</th>
+                            <th scope="col" class="px-6 py-3">Last Session</th>
+                            <th scope="col" class="px-6 py-3">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for summary in student_summaries %}
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="px-6 py-4 font-medium text-gray-900">{{ loop.index }}</td>
+                            <td class="px-6 py-4 font-medium text-gray-900">{{ summary.student.full_name }}</td>
+                            <td class="px-6 py-4">{{ summary.student.student_id }}</td>
+                            <td class="px-6 py-4">{{ summary.student.pe_course }}</td>
+                            <td class="px-6 py-4">{{ summary.student.enrolled_block }}</td>
+                            <td class="px-6 py-4">
+                                <span class="{% if summary.student.status == 'online' %}text-green-600{% else %}text-gray-600{% endif %}">
+                                    {{ summary.student.status|title }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 font-medium">
+                                {{ summary.total_hours }}h {{ summary.total_minutes }}m
+                            </td>
+                            <td class="px-6 py-4">{{ summary.total_sessions }}</td>
+                            <td class="px-6 py-4">
+                                {% if summary.total_sessions > 0 %}
+                                    {{ "%.1f"|format(summary.total_workout_time / summary.total_sessions) }}m
+                                {% else %}
+                                    0m
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if summary.first_session %}
+                                    {{ summary.first_session.strftime('%m/%d/%Y') }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if summary.last_session %}
+                                    {{ summary.last_session.strftime('%m/%d/%Y') }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="/individual_stats/{{ summary.student.student_id }}" 
+                                   class="text-blue-600 hover:underline">View Stats</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="bg-white p-6 rounded-lg shadow-md text-center">
+            <p class="text-gray-500">No student data available for the selected date range.</p>
+        </div>
+    {% endif %}
+
+    <style>
+        @media print {
+            .print\\:hidden { display: none !important; }
+            body { background: white !important; }
+            .bg-gradient-to-r { background: white !important; }
+            table { page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+        }
+    </style>
+{% endblock %} 

@@ -52,29 +52,99 @@ def stats_route():
         flash('RFID not recognized. Please try again.', 'error')
     return render_template('stats_forms.html', form=form)
 
-# Route for individual student stats
+# Route for searching students by name or ID
+@app.route('/search_students', methods=['GET', 'POST'])
+def search_students():
+    search_results = []
+    search_query = ''
+    
+    if request.method == 'POST':
+        search_query = request.form.get('search_query', '').strip()
+        if search_query:
+            # Search by name (partial match) or student ID (exact match)
+            search_results = StudentData.query.filter(
+                db.or_(
+                    StudentData.full_name.ilike(f'%{search_query}%'),
+                    StudentData.student_id.ilike(f'%{search_query}%')
+                )
+            ).all()
+    
+    return render_template('search_students.html', search_results=search_results, search_query=search_query)
+
+# Route for individual student stats with date filtering
 @app.route('/individual_stats/<string:user_id>')
 def individual_stats(user_id):
     user = StudentData.query.filter_by(student_id=user_id).first_or_404()
     logs_directory = 'logs'
     workout_data = defaultdict(float)
-    all_dates = {filename[:-5] for filename in os.listdir(logs_directory) if filename.endswith('.json')}
+    
+    # Create logs directory if it doesn't exist
+    if not os.path.exists(logs_directory):
+        os.makedirs(logs_directory)
+        all_dates = set()
+    else:
+        all_dates = {filename[:-5] for filename in os.listdir(logs_directory) if filename.endswith('.json')}
+    
+    # Get date filter from query parameters
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    # Filter dates if provided
+    if start_date:
+        try:
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
+            all_dates = {date for date in all_dates 
+                        if datetime.strptime(date, '%m-%d-%Y').date() >= start_date_obj.date()}
+        except ValueError:
+            pass
+    
+    if end_date:
+        try:
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
+            all_dates = {date for date in all_dates 
+                        if datetime.strptime(date, '%m-%d-%Y').date() <= end_date_obj.date()}
+        except ValueError:
+            pass
 
+    # Initialize workout data for filtered dates
     for date in all_dates:
         workout_data[date] = 0.0
 
-    for filename in os.listdir(logs_directory):
-        if filename.endswith('.json'):
-            with open(os.path.join(logs_directory, filename), 'r') as file:
-                for entry in json.load(file):
-                    if entry['student_id'] == user_id and entry['workout_time'] != "Workout ongoing":
-                        workout_data[filename[:-5]] += float(entry['workout_time'])
+    # Calculate accurate workout times
+    total_workout_time = 0.0
+    total_sessions = 0
+    
+    if os.path.exists(logs_directory):
+        for filename in os.listdir(logs_directory):
+            if filename.endswith('.json'):
+                date_key = filename[:-5]
+                if date_key in all_dates:  # Only process filtered dates
+                    with open(os.path.join(logs_directory, filename), 'r') as file:
+                        for entry in json.load(file):
+                            if entry['student_id'] == user_id and entry['workout_time'] != "Workout ongoing":
+                                try:
+                                    workout_time = float(entry['workout_time'])
+                                    workout_data[date_key] += workout_time
+                                    total_workout_time += workout_time
+                                    total_sessions += 1
+                                except (ValueError, TypeError):
+                                    continue
 
+    # Calculate hours and minutes for display
+    total_hours = int(total_workout_time // 60)
+    total_minutes = int(total_workout_time % 60)
+    
     return render_template(
         'individual_stats.html', 
         user=user, 
         workout_days=sorted(workout_data.keys()), 
-        workout_times=[workout_data[day] for day in sorted(workout_data.keys())]
+        workout_times=[workout_data[day] for day in sorted(workout_data.keys())],
+        total_workout_time=total_workout_time,
+        total_hours=total_hours,
+        total_minutes=total_minutes,
+        total_sessions=total_sessions,
+        start_date=start_date,
+        end_date=end_date
     )
 
 # Route for registering new students
@@ -150,6 +220,22 @@ def toggle_gym_status_route(user_id):
 @app.route('/daily_login_report/')
 def daily_login_report_dates():
     logs_directory = 'logs'
+    
+    # Create logs directory if it doesn't exist
+    if not os.path.exists(logs_directory):
+        os.makedirs(logs_directory)
+        return render_template('daily_login_report_dates.html', 
+                             dates=[], 
+                             available_months=[], 
+                             organized_logs={})
+    
+    # Check if there are any log files
+    if not os.listdir(logs_directory):
+        return render_template('daily_login_report_dates.html', 
+                             dates=[], 
+                             available_months=[], 
+                             organized_logs={})
+    
     all_dates = sorted(
         {datetime.strptime(filename[:-5], '%m-%d-%Y') for filename in os.listdir(logs_directory) if filename.endswith('.json')},
         reverse=True
@@ -175,6 +261,93 @@ def daily_login_report(date):
         with open(filepath, 'r') as file:
             log_entries = json.load(file)
     return render_template('daily_login_report.html', date=date, log_entries=log_entries)
+
+# Route for student summary report with date filtering
+@app.route('/student_summary')
+def student_summary():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    # Get all students
+    students = StudentData.query.all()
+    student_summaries = []
+    
+    logs_directory = 'logs'
+    
+    # Create logs directory if it doesn't exist
+    if not os.path.exists(logs_directory):
+        os.makedirs(logs_directory)
+        all_dates = set()
+    else:
+        all_dates = {filename[:-5] for filename in os.listdir(logs_directory) if filename.endswith('.json')}
+    
+    # Filter dates if provided
+    if start_date:
+        try:
+            start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
+            all_dates = {date for date in all_dates 
+                        if datetime.strptime(date, '%m-%d-%Y').date() >= start_date_obj.date()}
+        except ValueError:
+            pass
+    
+    if end_date:
+        try:
+            end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
+            all_dates = {date for date in all_dates 
+                        if datetime.strptime(date, '%m-%d-%Y').date() <= end_date_obj.date()}
+        except ValueError:
+            pass
+    
+    for student in students:
+        total_workout_time = 0.0
+        total_sessions = 0
+        first_session = None
+        last_session = None
+        
+        if os.path.exists(logs_directory):
+            for filename in os.listdir(logs_directory):
+                if filename.endswith('.json'):
+                    date_key = filename[:-5]
+                    if date_key in all_dates:  # Only process filtered dates
+                        with open(os.path.join(logs_directory, filename), 'r') as file:
+                            for entry in json.load(file):
+                                if entry['student_id'] == student.student_id and entry['workout_time'] != "Workout ongoing":
+                                    try:
+                                        workout_time = float(entry['workout_time'])
+                                        total_workout_time += workout_time
+                                        total_sessions += 1
+                                        
+                                        # Track first and last session
+                                        session_date = datetime.strptime(date_key, '%m-%d-%Y')
+                                        if first_session is None or session_date < first_session:
+                                            first_session = session_date
+                                        if last_session is None or session_date > last_session:
+                                            last_session = session_date
+                                            
+                                    except (ValueError, TypeError):
+                                        continue
+        
+        # Calculate hours and minutes
+        total_hours = int(total_workout_time // 60)
+        total_minutes = int(total_workout_time % 60)
+        
+        student_summaries.append({
+            'student': student,
+            'total_workout_time': total_workout_time,
+            'total_hours': total_hours,
+            'total_minutes': total_minutes,
+            'total_sessions': total_sessions,
+            'first_session': first_session,
+            'last_session': last_session
+        })
+    
+    # Sort by total workout time (descending)
+    student_summaries.sort(key=lambda x: x['total_workout_time'], reverse=True)
+    
+    return render_template('student_summary.html', 
+                         student_summaries=student_summaries,
+                         start_date=start_date,
+                         end_date=end_date)
 
 if __name__ == "__main__":
     print (f"{get_current_datetime()[0]} {get_current_datetime()[1]} : Starting server...")

@@ -3,16 +3,36 @@
 {% block title %}Check Stats{% endblock %}
 
 {% block content %}
-{% from "helpers/_formhelpers.html" import render_field %}
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex-shrink-0">
+            <a href="/" class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Home</a>
+        </div>
+        <div class="flex-grow text-center mx-4">
+            <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+                Check Student Stats
+            </h1>
+        </div>
+        <div class="flex-shrink-0">
+            <a href="/search_students" class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700">Search Students</a>
+        </div>
+    </div>
 
-<form method="post" id="autoSubmitInput" action="{{ url_for('stats_route') }}">
-    <dl>
-        {{ render_field(form.rfid , class='w-full h-10 p-2 border border-gray-300 rounded')  }}
-    </dl>
-    <p><input type="submit" value="Check Stats"></p>
-</form>
+    <div class="max-w-md mx-auto">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-semibold mb-4">Enter RFID to Check Stats</h2>
+            {% from "helpers/_formhelpers.html" import render_field %}
 
-<script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
-<script src="{{ url_for('static', filename='js/time.js') }}"></script>
+            <form method="post" id="autoSubmitInput" action="{{ url_for('stats_route') }}">
+                <dl>
+                    {{ render_field(form.rfid , class='w-full h-10 p-2 border border-gray-300 rounded')  }}
+                </dl>
+                <button type="submit" class="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Check Stats
+                </button>
+            </form>
+        </div>
+    </div>
 
+    <script src="{{ url_for('static', filename='js/formHandler.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/time.js') }}"></script>
 {% endblock %}

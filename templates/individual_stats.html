@@ -3,53 +3,162 @@
 {% block title %}{{user.full_name}}{% endblock %}
 
 {% block content %}
-    <h1>User Stats</h1>
-    <h2>{{ user.full_name }}</h2>
-    <p><strong>Student ID:</strong> {{ user.student_id }}</p>
-    <p><strong>PE Course:</strong> {{ user.pe_course }}</p>
-    <p><strong>Enrolled Block:</strong> {{ user.enrolled_block }}</p>
-    <p><strong>Current Status:</strong> {{ user.status }}</p>
-    <p><strong>Last Gym Session:</strong> {% if user.last_gym %} {{ user.last_gym }} {% else %} N/A {% endif %}</p>
-    <p><strong>Total Workout Time:</strong> {{ user.total_workout_time | round }} minutes</p>
-    <p><strong>Total Workout Sessions:</strong> {{ user.completed_sessions }}</p>
+    <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex-shrink-0">
+                <a href="/" class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Home</a>
+            </div>
+            <div class="flex-grow text-center mx-4">
+                <h1 class="text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+                    {{ user.full_name }} - Student Stats
+                </h1>
+            </div>
+            <div class="flex-shrink-0">
+                <button onclick="window.print()" class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">Print Report</button>
+            </div>
+        </div>
 
+        <!-- Date Filter Form -->
+        <div class="bg-white p-4 rounded-lg shadow-md mb-6 print:hidden">
+            <h3 class="text-lg font-semibold mb-3">Filter by Date Range</h3>
+            <form method="GET" class="flex flex-wrap gap-4 items-end">
+                <div>
+                    <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" id="start_date" name="start_date" value="{{ start_date or '' }}" 
+                           class="px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ end_date or '' }}" 
+                           class="px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="flex gap-2">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Filter</button>
+                    <a href="/individual_stats/{{ user.student_id }}" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">Clear</a>
+                </div>
+            </form>
+        </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <canvas id="gym_frequency" width="900" height="400"></canvas>
-    
-    <script>
-        var ctx = document.getElementById('gym_frequency').getContext('2d');
-        var lineChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ workout_days | tojson | safe }}, // X-axis: Days
-                datasets: [{
-                    label: 'Total Workout Time (minutes)',
-                    data: {{ workout_times | tojson | safe }}, // Y-axis: Total Workout Time
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1,
-                    fill: true
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
+        <!-- Student Information -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">Student Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p><strong>Full Name:</strong> {{ user.full_name }}</p>
+                    <p><strong>Student ID:</strong> {{ user.student_id }}</p>
+                    <p><strong>PE Course:</strong> {{ user.pe_course }}</p>
+                </div>
+                <div>
+                    <p><strong>Enrolled Block:</strong> {{ user.enrolled_block }}</p>
+                    <p><strong>Current Status:</strong> 
+                        <span class="{% if user.status == 'online' %}text-green-600{% else %}text-gray-600{% endif %}">
+                            {{ user.status|title }}
+                        </span>
+                    </p>
+                    <p><strong>Last Gym Session:</strong> 
+                        {% if user.last_gym %} 
+                            {{ user.last_gym.strftime('%Y-%m-%d %H:%M:%S') }}
+                        {% else %} 
+                            N/A 
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Summary -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">Statistics Summary</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-blue-800">Total Workout Time</h3>
+                    <p class="text-2xl font-bold text-blue-600">{{ total_hours }}h {{ total_minutes }}m</p>
+                    <p class="text-sm text-gray-600">({{ "%.2f"|format(total_workout_time) }} minutes)</p>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-green-800">Total Sessions</h3>
+                    <p class="text-2xl font-bold text-green-600">{{ total_sessions }}</p>
+                    <p class="text-sm text-gray-600">Completed workouts</p>
+                </div>
+                <div class="text-center p-4 bg-purple-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-purple-800">Average Time</h3>
+                    <p class="text-2xl font-bold text-purple-600">
+                        {% if total_sessions > 0 %}
+                            {{ "%.1f"|format(total_workout_time / total_sessions) }}m
+                        {% else %}
+                            0m
+                        {% endif %}
+                    </p>
+                    <p class="text-sm text-gray-600">Per session</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workout Chart -->
+        {% if workout_days %}
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Workout Time Chart</h2>
+                <canvas id="gym_frequency" width="900" height="400"></canvas>
+            </div>
+        {% else %}
+            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 class="text-xl font-semibold mb-4">Workout Time Chart</h2>
+                <p class="text-gray-500 text-center py-8">No workout data available for the selected date range.</p>
+            </div>
+        {% endif %}
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            {% if workout_days %}
+            var ctx = document.getElementById('gym_frequency').getContext('2d');
+            var lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{ workout_days | tojson | safe }},
+                    datasets: [{
+                        label: 'Workout Time (minutes)',
+                        data: {{ workout_times | tojson | safe }},
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
                         title: {
                             display: true,
-                            text: 'Days'
+                            text: 'Daily Workout Time'
                         }
                     },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Total Workout Time (minutes)'
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            }
                         },
-                        beginAtZero: true
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Minutes'
+                            },
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
-    </script>
+            });
+            {% endif %}
+        </script>
 
+        <style>
+            @media print {
+                .print\\:hidden { display: none !important; }
+                body { background: white !important; }
+                .bg-gradient-to-r { background: white !important; }
+            }
+        </style>
+    </div>
 {% endblock %}
